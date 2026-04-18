@@ -1,6 +1,7 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
+import { useSearchParams, useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import { useApi, fetchApi } from '@/lib/api';
 import { useAuth } from '@clerk/nextjs';
@@ -28,15 +29,34 @@ interface Job {
 }
 
 export default function DashboardPage() {
+  return (
+    <Suspense fallback={<div className={styles.page}>Loading pipeline...</div>}>
+      <DashboardContent />
+    </Suspense>
+  );
+}
+
+function DashboardContent() {
   const { data: jobs, error, isLoading, mutate } = useApi<Job[]>('/api/jobs');
   const { getToken } = useAuth();
   const [urlInput, setUrlInput] = useState('');
   const [localJobs, setLocalJobs] = useState<Job[]>([]);
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   // Keep local state in sync with API
   useEffect(() => {
     if (jobs) setLocalJobs(jobs);
   }, [jobs]);
+
+  // Handle bookmarklet import
+  useEffect(() => {
+    const importUrl = searchParams.get('importUrl');
+    if (importUrl && !urlInput) {
+      setUrlInput(importUrl);
+      router.replace('/app/dashboard'); // clean up URL
+    }
+  }, [searchParams, router, urlInput]);
 
   const handleAddJob = async () => {
     if (!urlInput) return;

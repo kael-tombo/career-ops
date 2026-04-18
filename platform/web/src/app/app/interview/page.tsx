@@ -25,6 +25,9 @@ export default function InterviewPrepPage() {
           <h1 className={styles.title}>Dynamic Story Bank</h1>
           <p className={styles.subtitle}>Behavioral STAR+R stories extracted from your AI job evaluations.</p>
         </div>
+        <div className={styles.headerActions}>
+          <a href="/app/interview/practice" className="btn btn-primary btn-sm" id="btn-practice">🎙️ AI Mock Interview</a>
+        </div>
       </div>
       
       <div className={styles.grid}>

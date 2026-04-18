@@ -94,5 +94,59 @@ export async function profileRoutes(app) {
 
     return stories;
   });
+
+  // GET /api/profile/analytics — aggregated stats
+  app.get('/analytics', { preHandler: [requireAuth] }, async (request) => {
+    const userId = request.user.dbId;
+    const { evaluations, jobs } = await import('../db/schema.js');
+
+    const userJobs = await db.select().from(jobs).where(eq(jobs.userId, userId));
+    const userEvals = await db.select().from(evaluations).where(eq(evaluations.userId, userId));
+
+    // 1. Pipeline Funnel
+    const funnel = {
+      Inbox: 0,
+      Evaluated: 0,
+      Applied: 0,
+      Interview: 0,
+      Offer: 0,
+    };
+    for (const j of userJobs) {
+      if (funnel[j.status] !== undefined) {
+        funnel[j.status]++;
+      } else if (j.status !== 'Discarded' && j.status !== 'Rejected') {
+        funnel['Evaluated']++; // default fallback for other active statuses
+      }
+    }
+
+    // 2. Archetype Distribution
+    const archetypes = {};
+    for (const e of userEvals) {
+      if (e.archetype) {
+        // Strip out secondary archetypes if combined (e.g. "Software Engineer (Backend)")
+        const primary = e.archetype.split('(')[0].trim();
+        archetypes[primary] = (archetypes[primary] || 0) + 1;
+      }
+    }
+
+    // 3. Scores Trend
+    // Group by week or just return last N evaluations
+    const scores = userEvals
+      .filter(e => e.score && !isNaN(parseFloat(e.score)))
+      .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+      .map(e => ({
+        date: new Date(e.createdAt).toLocaleDateString(),
+        score: parseFloat(e.score)
+      }));
+
+    return {
+      funnel,
+      archetypes,
+      scores,
+      totalJobs: userJobs.length,
+      totalEvaluations: userEvals.length
+    };
+  });
 }
+
 

@@ -11,6 +11,7 @@ import { scanRoutes } from './routes/scan.js';
 import { cvRoutes } from './routes/cv.js';
 import { subscriptionsRoutes } from './routes/subscriptions.js';
 import { profileRoutes } from './routes/profile.js';
+import { interviewRoutes } from './routes/interview.js';
 import { startWorkers } from './queues/workers.js';
 
 const app = Fastify({ logger: { level: process.env.NODE_ENV === 'production' ? 'warn' : 'info' } });
@@ -57,6 +58,7 @@ await app.register(scanRoutes, { prefix: '/api/scan' });
 await app.register(cvRoutes, { prefix: '/api/cv' });
 await app.register(subscriptionsRoutes, { prefix: '/api/subscriptions' });
 await app.register(profileRoutes, { prefix: '/api/profile' });
+await app.register(interviewRoutes, { prefix: '/api/interview' });
 
 // ── Health ────────────────────────────────────────────────────────────────────
 app.get('/health', async () => ({ status: 'ok', version: '1.0.0', ts: new Date().toISOString() }));
