@@ -1,0 +1,81 @@
+.page { padding: 40px 48px; display: flex; flex-direction: column; gap: 28px; }
+
+.back { font-size: 13px; color: var(--fg-muted); transition: color var(--duration) var(--ease); width: fit-content; }
+.back:hover { color: var(--fg); }
+
+/* ── Header ─────────────────────────────────────────────────────────────── */
+.header { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; }
+.headerLeft { display: flex; align-items: flex-start; gap: 20px; }
+.companyBadge {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--ctp-blue), var(--ctp-mauve));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--ctp-crust);
+  flex-shrink: 0;
+}
+.title { font-size: 26px; font-weight: 900; letter-spacing: -0.03em; margin-bottom: 8px; }
+.meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.company { font-weight: 700; color: var(--fg-muted); }
+.dot { color: var(--ctp-overlay0); }
+.urlLink { font-size: 13px; color: var(--ctp-blue); }
+.urlLink:hover { text-decoration: underline; }
+
+.headerRight { display: flex; align-items: center; gap: 24px; flex-shrink: 0; }
+
+/* ── Score Ring ──────────────────────────────────────────────────────────── */
+.scoreRing { position: relative; display: inline-flex; align-items: center; justify-content: center; }
+.scoreText {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.scoreNum { font-size: 22px; font-weight: 900; color: var(--ctp-blue); line-height: 1; }
+.scoreDenom { font-size: 11px; color: var(--fg-muted); }
+.actions { display: flex; flex-direction: column; gap: 8px; }
+
+/* ── Legitimacy Bar ──────────────────────────────────────────────────────── */
+.legitimacyBar {
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.legIcon { font-size: 16px; }
+.legText { flex: 1; font-size: 13px; color: var(--fg-muted); }
+
+/* ── Blocks ──────────────────────────────────────────────────────────────── */
+.blocksGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.block { padding: 24px; }
+.blockWide { grid-column: span 2; }
+.blockHeader { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.blockIcon { font-size: 16px; }
+.blockId {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ctp-overlay0);
+  background: var(--bg-surface);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.blockTitle { font-size: 14px; font-weight: 700; }
+.blockContent { display: flex; flex-direction: column; gap: 12px; }
+.blockPara {
+  font-size: 13px;
+  color: var(--fg-muted);
+  line-height: 1.7;
+  white-space: pre-line;
+}

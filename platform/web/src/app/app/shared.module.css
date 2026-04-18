@@ -1,0 +1,37 @@
+.page { padding: 40px 48px; display: flex; flex-direction: column; gap: 32px; }
+
+.header { display: flex; justify-content: space-between; align-items: flex-start; }
+.title { font-size: 32px; font-weight: 900; letter-spacing: -0.03em; }
+.subtitle { color: var(--fg-muted); font-size: 14px; margin-top: 4px; }
+
+/* General Cards & Grid */
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.card { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+.card h2 { font-size: 18px; }
+.muted { color: var(--fg-muted); font-size: 13px; }
+
+/* Lists Inside Cards */
+.list { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
+.listItem { 
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 16px; background: rgba(255,255,255,0.03); 
+  border-radius: 8px; font-size: 14px; border: 1px solid var(--border);
+}
+
+/* Form Groups */
+.formGroup { display: flex; flex-direction: column; gap: 8px; }
+.label { font-size: 13px; font-weight: 600; color: var(--fg-muted); }
+.helpText { font-size: 11px; color: var(--ctp-overlay0); }
+
+.section { padding: 24px; display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
+.planInfo { font-size: 14px; }
+
+/* CV Grid */
+.cvGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.cvCard { display: flex; flex-direction: column; padding: 20px; gap: 16px; }
+.cvTop { display: flex; justify-content: space-between; align-items: center; }
+.cvDate { font-size: 11px; color: var(--ctp-overlay0); }
+.cvBody { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.cvCompany { font-weight: 700; font-size: 16px; }
+.cvRole { font-size: 13px; color: var(--fg-muted); }
+.cvBottom .btn { width: 100%; justify-content: center; }

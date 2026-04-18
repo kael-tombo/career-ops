@@ -1,0 +1,93 @@
+.page { padding: 40px 48px; display: flex; flex-direction: column; gap: 32px; }
+
+/* ── Header ─────────────────────────────────────────────────────────────── */
+.header { display: flex; justify-content: space-between; align-items: flex-start; }
+.title { font-size: 32px; font-weight: 900; letter-spacing: -0.03em; }
+.subtitle { color: var(--fg-muted); font-size: 14px; margin-top: 4px; }
+.headerActions { display: flex; gap: 12px; align-items: center; }
+
+/* ── Stats ───────────────────────────────────────────────────────────────── */
+.statsGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.statCard { padding: 20px 24px; display: flex; align-items: center; gap: 16px; }
+.statIcon { font-size: 24px; }
+.statValue { font-size: 32px; font-weight: 900; letter-spacing: -0.03em; line-height: 1; }
+.statLabel { font-size: 12px; color: var(--fg-muted); margin-top: 4px; }
+.color_blue   { color: var(--ctp-blue); }
+.color_green  { color: var(--ctp-green); }
+.color_mauve  { color: var(--ctp-mauve); }
+.color_peach  { color: var(--ctp-peach); }
+
+/* ── Add Form ────────────────────────────────────────────────────────────── */
+.addForm {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+}
+.addFormLabel { font-size: 13px; color: var(--fg-muted); white-space: nowrap; font-weight: 600; }
+.addInput { flex: 1; }
+
+/* ── Kanban ──────────────────────────────────────────────────────────────── */
+.kanban {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+.kanbanCol { display: flex; flex-direction: column; gap: 10px; }
+.kanbanHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px;
+}
+.kanbanTitle { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg-muted); }
+.kanbanCards { display: flex; flex-direction: column; gap: 8px; }
+.kanbanEmpty { padding: 24px; text-align: center; font-size: 12px; color: var(--ctp-overlay0); border: 1px dashed var(--border); border-radius: var(--radius); }
+
+/* ── Job Card ────────────────────────────────────────────────────────────── */
+.jobCard {
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  cursor: pointer;
+  transition: all var(--duration) var(--ease);
+  text-decoration: none;
+  color: inherit;
+}
+.jobCard:hover { border-color: var(--ctp-surface2); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+.jobCardTop { display: flex; justify-content: space-between; align-items: flex-start; }
+.jobCompany { font-size: 13px; font-weight: 700; }
+.jobScore { font-size: 16px; font-weight: 900; color: var(--ctp-blue); }
+.jobRole { font-size: 12px; color: var(--fg-muted); line-height: 1.4; }
+.jobCardBottom { display: flex; justify-content: space-between; align-items: center; }
+.jobDate { font-size: 10px; color: var(--ctp-overlay0); }
+
+/* ── Section ─────────────────────────────────────────────────────────────── */
+.section { display: flex; flex-direction: column; gap: 16px; }
+.sectionTitle { font-size: 18px; font-weight: 800; }
+
+/* ── Table ───────────────────────────────────────────────────────────────── */
+.table { overflow: hidden; }
+.tableHead th {
+  padding: 14px 20px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg-muted);
+  background: var(--bg-surface);
+}
+.tableRow td {
+  padding: 14px 20px;
+  font-size: 13px;
+  border-top: 1px solid var(--border);
+  vertical-align: middle;
+}
+.tableRow:hover td { background: rgba(255,255,255,0.01); }
+.tableCompany { font-weight: 700; }
+.tableRole { color: var(--fg-muted); }
+.tableScore { font-weight: 800; color: var(--ctp-blue); }
+.tableDate { font-size: 12px; color: var(--ctp-overlay0); }

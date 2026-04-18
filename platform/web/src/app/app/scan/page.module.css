@@ -1,0 +1,64 @@
+.page { padding: 40px 48px; display: flex; flex-direction: column; gap: 28px; }
+.header { display: flex; justify-content: space-between; align-items: flex-start; }
+.title { font-size: 32px; font-weight: 900; letter-spacing: -0.03em; }
+.subtitle { color: var(--fg-muted); font-size: 14px; margin-top: 4px; }
+
+.statusCard { padding: 18px 24px; }
+.statusRow { display: flex; justify-content: space-between; align-items: center; }
+.statusLeft { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+.statusRight { display: flex; gap: 10px; }
+.pulseGreen {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--ctp-green);
+  animation: pulse-green 2s infinite;
+  display: inline-block;
+}
+.statusText { color: var(--fg-muted); font-size: 13px; }
+.statChip {
+  font-size: 12px; font-weight: 600;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  padding: 4px 12px; border-radius: 20px;
+  color: var(--fg-muted);
+}
+
+.section { display: flex; flex-direction: column; gap: 16px; }
+.sectionTitle { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+
+.matchGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.matchCard { padding: 20px; display: flex; flex-direction: column; gap: 14px;
+  transition: transform var(--duration) var(--ease), border-color var(--duration) var(--ease); }
+.matchCard:hover { transform: translateY(-3px); border-color: var(--ctp-surface2); }
+.matchTop { display: flex; align-items: center; gap: 12px; }
+.matchCompany {
+  width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--ctp-blue), var(--ctp-mauve));
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 14px; color: var(--ctp-crust);
+}
+.matchName { font-weight: 700; font-size: 14px; }
+.matchSource { font-size: 11px; color: var(--fg-muted); }
+.matchRole { font-size: 13px; color: var(--fg-muted); }
+.matchActions { display: flex; gap: 8px; }
+
+.portalsTable { overflow: hidden; }
+.portalRow {
+  display: grid; grid-template-columns: 1fr auto auto auto;
+  align-items: center; gap: 16px; padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.portalRow:last-of-type { border-bottom: none; }
+.portalName { font-size: 13px; font-weight: 600; }
+.portalLast { font-size: 12px; color: var(--fg-muted); }
+.portalDot { width: 8px; height: 8px; border-radius: 50%; }
+.portalActive { background: var(--ctp-green); }
+.portalMore { padding: 12px 20px; font-size: 12px; color: var(--fg-muted); text-align: center; border-top: 1px dashed var(--border); }
+
+.upgradeGate {
+  display: flex; align-items: center; gap: 20px; padding: 24px 28px;
+  border-color: rgba(137,180,250,0.3);
+  background: rgba(137,180,250,0.04);
+}
+.upgradeIcon { font-size: 28px; }
+.upgradeTitle { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.upgradeSub { font-size: 13px; color: var(--fg-muted); max-width: 500px; line-height: 1.5; }
