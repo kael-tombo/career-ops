@@ -10,6 +10,30 @@ interface AnalyticsData {
   scores: { date: string; score: number }[];
 }
 
+function GapAnalysis() {
+  const { data, isLoading, error } = useApi<{ analysis: string }>('/api/profile/gaps');
+
+  return (
+    <div className={`${styles.card} card`} style={{ gridColumn: '1 / -1', marginTop: '1rem' }}>
+      <h2>💡 AI Skill Gap Analyzer</h2>
+      <p className={styles.muted} style={{ marginBottom: '1rem' }}>
+        Synthesized from your low-scoring evaluations to identify critical missing skills and archetype weaknesses.
+      </p>
+      {isLoading ? (
+        <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--ctp-subtext0)' }}>
+          Analyzing your evaluations... This takes a moment.
+        </div>
+      ) : error ? (
+        <div style={{ color: 'var(--ctp-red)' }}>Failed to load gap analysis.</div>
+      ) : (
+        <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6, fontFamily: 'var(--ctp-font-sans)' }}>
+          {data?.analysis || 'No data.'}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function AnalyticsPage() {
   const { data, isLoading, error } = useApi<AnalyticsData>('/api/profile/analytics');
 
@@ -107,6 +131,9 @@ export default function AnalyticsPage() {
             <span>{data.scores[data.scores.length - 1]?.date || ''}</span>
           </div>
         </div>
+
+        {/* AI Skill Gap Analyzer */}
+        <GapAnalysis />
       </div>
     </div>
   );

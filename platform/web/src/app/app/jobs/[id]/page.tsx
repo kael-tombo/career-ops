@@ -29,8 +29,12 @@ interface Job {
 export default function JobDetailPage({ params }: { params: { id: string } }) {
   const { data: job, error, isLoading, mutate } = useApi<Job>(`/api/jobs/${params.id}`);
   const { getToken } = useAuth();
+  const [activeTab, setActiveTab] = useState<'outreach' | 'coverLetter' | 'negotiation'>('outreach');
   const [outreachDraft, setOutreachDraft] = useState<string | null>(null);
-  const [isGeneratingOutreach, setIsGeneratingOutreach] = useState(false);
+  const [coverLetterDraft, setCoverLetterDraft] = useState<string | null>(null);
+  const [negotiationDraft, setNegotiationDraft] = useState<string | null>(null);
+  const [offerDetails, setOfferDetails] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
 
   if (isLoading) return <div className={styles.page}>Loading job details...</div>;
   if (error || !job) return <div className={styles.page}>Error loading job details.</div>;
@@ -61,18 +65,41 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
 
   const handleGenerateOutreach = async () => {
     try {
-      setIsGeneratingOutreach(true);
+      setIsGenerating(true);
       const res = await fetchApi(`/api/jobs/${job.id}/outreach`, { method: 'POST' }, getToken);
       setOutreachDraft(res.draft);
     } catch (err: any) {
-      if (err?.message?.includes('402') || err?.message?.includes('UPGRADE')) {
-        alert('Smart Outreach requires a Pro plan. Upgrade in Settings.');
-      } else {
-        console.error(err);
-        alert('Failed to generate outreach draft.');
-      }
+      alert(err.message || 'Failed to generate outreach draft.');
     } finally {
-      setIsGeneratingOutreach(false);
+      setIsGenerating(false);
+    }
+  };
+
+  const handleGenerateCoverLetter = async () => {
+    try {
+      setIsGenerating(true);
+      const res = await fetchApi(`/api/jobs/${job.id}/cover-letter`, { method: 'POST' }, getToken);
+      setCoverLetterDraft(res.draft);
+    } catch (err: any) {
+      alert(err.message || 'Failed to generate cover letter.');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleGenerateNegotiation = async () => {
+    if (!offerDetails.trim()) return alert('Please enter offer details first.');
+    try {
+      setIsGenerating(true);
+      const res = await fetchApi(`/api/jobs/${job.id}/negotiate`, { 
+        method: 'POST',
+        body: JSON.stringify({ offerDetails })
+      }, getToken);
+      setNegotiationDraft(res.draft);
+    } catch (err: any) {
+      alert(err.message || 'Failed to generate negotiation draft.');
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -143,30 +170,97 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
         <span className="badge badge-green">{job.status}</span>
       </div>
 
-      {/* ── Smart Outreach ────────────────────────────────────────────── */}
+      {/* ── AI Assistants ────────────────────────────────────────────── */}
       <div className={`${styles.block} card ${styles.blockWide}`} style={{ marginTop: '1rem', marginBottom: '2rem' }}>
-        <div className={styles.blockHeader}>
-          <span className={styles.blockIcon}>✉️</span>
-          <span className={styles.blockTitle}>Smart Outreach</span>
-          <button 
-            className="btn btn-primary btn-sm" 
-            style={{ marginLeft: 'auto' }}
-            onClick={handleGenerateOutreach}
-            disabled={isGeneratingOutreach}
-          >
-            {isGeneratingOutreach ? 'Generating...' : '✨ Generate Cold Email'}
-          </button>
+        <div className={styles.blockHeader} style={{ borderBottom: '1px solid var(--ctp-surface1)', paddingBottom: '0.5rem' }}>
+          <div style={{ display: 'flex', gap: '1.5rem' }}>
+            <button 
+              className={activeTab === 'outreach' ? styles.activeTab : styles.tab} 
+              onClick={() => setActiveTab('outreach')}
+            >
+              ✉️ Outreach
+            </button>
+            <button 
+              className={activeTab === 'coverLetter' ? styles.activeTab : styles.tab} 
+              onClick={() => setActiveTab('coverLetter')}
+            >
+              📄 Cover Letter
+            </button>
+            {job.status === 'Offer' && (
+              <button 
+                className={activeTab === 'negotiation' ? styles.activeTab : styles.tab} 
+                onClick={() => setActiveTab('negotiation')}
+              >
+                🤝 Negotiation
+              </button>
+            )}
+          </div>
+          
+          <div style={{ marginLeft: 'auto' }}>
+            {activeTab === 'outreach' && (
+              <button className="btn btn-primary btn-sm" onClick={handleGenerateOutreach} disabled={isGenerating}>
+                {isGenerating ? 'Generating...' : '✨ Generate Email'}
+              </button>
+            )}
+            {activeTab === 'coverLetter' && (
+              <button className="btn btn-primary btn-sm" onClick={handleGenerateCoverLetter} disabled={isGenerating}>
+                {isGenerating ? 'Generating...' : '✨ Generate Letter'}
+              </button>
+            )}
+            {activeTab === 'negotiation' && (
+              <button className="btn btn-primary btn-sm" onClick={handleGenerateNegotiation} disabled={isGenerating}>
+                {isGenerating ? 'Generating...' : '✨ Draft Response'}
+              </button>
+            )}
+          </div>
         </div>
-        <div className={styles.blockContent}>
-          {!outreachDraft ? (
-            <p className={styles.muted}>Generate a personalized cold email to the hiring manager based on your evaluation.</p>
-          ) : (
-            <textarea 
-              className="input" 
-              style={{ width: '100%', minHeight: '200px', fontFamily: 'var(--ctp-font-mono)', lineHeight: 1.5, padding: '1rem' }}
-              value={outreachDraft}
-              onChange={(e) => setOutreachDraft(e.target.value)}
-            />
+
+        <div className={styles.blockContent} style={{ paddingTop: '1rem' }}>
+          {activeTab === 'outreach' && (
+            !outreachDraft ? (
+              <p className={styles.muted}>Generate a personalized cold email based on your evaluation.</p>
+            ) : (
+              <textarea 
+                className="input" 
+                style={{ width: '100%', minHeight: '200px', fontFamily: 'var(--ctp-font-mono)', lineHeight: 1.5, padding: '1rem' }}
+                value={outreachDraft}
+                onChange={(e) => setOutreachDraft(e.target.value)}
+              />
+            )
+          )}
+
+          {activeTab === 'coverLetter' && (
+            !coverLetterDraft ? (
+              <p className={styles.muted}>Generate a formal cover letter tailored to this role and your profile.</p>
+            ) : (
+              <textarea 
+                className="input" 
+                style={{ width: '100%', minHeight: '300px', fontFamily: 'var(--ctp-font-mono)', lineHeight: 1.5, padding: '1rem' }}
+                value={coverLetterDraft}
+                onChange={(e) => setCoverLetterDraft(e.target.value)}
+              />
+            )
+          )}
+
+          {activeTab === 'negotiation' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <p className={styles.muted}>Paste the offer details (salary, equity, benefits) to draft a negotiation response.</p>
+              <textarea 
+                className="input" 
+                placeholder="Paste offer email or details here..."
+                style={{ width: '100%', minHeight: '100px', padding: '1rem' }}
+                value={offerDetails}
+                onChange={(e) => setOfferDetails(e.target.value)}
+              />
+              {negotiationDraft && (
+                <textarea 
+                  className="input" 
+                  style={{ width: '100%', minHeight: '250px', fontFamily: 'var(--ctp-font-mono)', lineHeight: 1.5, padding: '1rem', marginTop: '1rem' }}
+                  value={negotiationDraft}
+                  onChange={(e) => setNegotiationDraft(e.target.value)}
+                />
+              )}
+            </div>
           )}
         </div>
       </div>

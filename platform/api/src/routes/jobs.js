@@ -131,5 +131,93 @@ Write a short, highly personalized cold email (max 3 paragraphs).
 
     return { draft: msg.content[0].text };
   });
+
+  // POST /api/jobs/:id/negotiate — generate negotiation response
+  app.post('/:id/negotiate', { preHandler: [requireAuth, requirePlan('pro')] }, async (request, reply) => {
+    const { id } = request.params;
+    const userId = request.user.dbId;
+    const { offerDetails } = request.body;
+
+    const [job] = await db.select().from(jobs).where(and(eq(jobs.id, id), eq(jobs.userId, userId)));
+    if (!job) return reply.code(404).send({ error: 'Not found' });
+
+    const { profiles } = await import('../db/schema.js');
+    const [profile] = await db.select().from(profiles).where(eq(profiles.userId, userId));
+    const [evalData] = await db.select().from(evaluations).where(eq(evaluations.jobId, id));
+
+    const Anthropic = (await import('@anthropic-ai/sdk')).default;
+    const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+    const prompt = `
+You are an expert negotiation coach. Help a candidate draft a response to a job offer.
+Company: ${job.company}
+Role: ${job.role}
+Candidate Target Compensation: ${profile?.compensationTarget || 'Not specified'}
+
+Offer Details provided by candidate:
+${offerDetails}
+
+AI Market Research for this role (Block D):
+${evalData?.blockD || 'No data'}
+
+Write a professional, collaborative, yet firm negotiation response.
+- Express genuine excitement about the role and team.
+- Use the "anchor" method if applicable, or ask for specific adjustments based on market data.
+- Mention 1-2 key unique values the candidate brings (from Block B/C context if possible).
+- Keep it concise (max 3-4 paragraphs).
+`;
+
+    const msg = await anthropic.messages.create({
+      model: 'claude-3-haiku-20240307',
+      max_tokens: 800,
+      messages: [{ role: 'user', content: prompt }]
+    });
+
+    return { draft: msg.content[0].text };
+  });
+
+  // POST /api/jobs/:id/cover-letter — generate tailored cover letter
+  app.post('/:id/cover-letter', { preHandler: [requireAuth, requirePlan('pro')] }, async (request, reply) => {
+    const { id } = request.params;
+    const userId = request.user.dbId;
+
+    const [job] = await db.select().from(jobs).where(and(eq(jobs.id, id), eq(jobs.userId, userId)));
+    if (!job) return reply.code(404).send({ error: 'Not found' });
+
+    const { profiles } = await import('../db/schema.js');
+    const [profile] = await db.select().from(profiles).where(eq(profiles.userId, userId));
+    const [evalData] = await db.select().from(evaluations).where(eq(evaluations.jobId, id));
+
+    const Anthropic = (await import('@anthropic-ai/sdk')).default;
+    const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+    const prompt = `
+You are an expert career consultant. Write a highly tailored cover letter for:
+Company: ${job.company}
+Role: ${job.role}
+
+Candidate Master Profile:
+${profile?.cvMarkdown || 'No CV provided'}
+
+Job Evaluation (Block A & B):
+${evalData?.blockA || ''}
+${evalData?.blockB || ''}
+
+Instructions:
+- Write a 3-paragraph formal cover letter.
+- Paragraph 1: Why this company/role specifically.
+- Paragraph 2: Core value proposition and matching proof points.
+- Paragraph 3: Call to action.
+- Keep it professional, confident, and concise.
+`;
+
+    const msg = await anthropic.messages.create({
+      model: 'claude-3-haiku-20240307',
+      max_tokens: 1000,
+      messages: [{ role: 'user', content: prompt }]
+    });
+
+    return { draft: msg.content[0].text };
+  });
 }
 

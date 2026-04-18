@@ -79,3 +79,24 @@
   line-height: 1.7;
   white-space: pre-line;
 }
+
+.tab, .activeTab {
+  background: none;
+  border: none;
+  padding: 8px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--fg-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all var(--duration) var(--ease);
+}
+
+.tab:hover {
+  color: var(--fg);
+}
+
+.activeTab {
+  color: var(--ctp-blue);
+  border-bottom-color: var(--ctp-blue);
+}

@@ -147,6 +147,57 @@ export async function profileRoutes(app) {
       totalEvaluations: userEvals.length
     };
   });
+
+  // GET /api/profile/gaps — AI synthesized skill gap analysis
+  app.get('/gaps', { preHandler: [requireAuth] }, async (request, reply) => {
+    const userId = request.user.dbId;
+    const { evaluations, jobs } = await import('../db/schema.js');
+
+    // Find low-scoring evaluations (e.g., < 3.5)
+    const weakEvals = await db
+      .select({
+        blockC: evaluations.blockC,
+        company: jobs.company,
+        role: jobs.role,
+        score: evaluations.score
+      })
+      .from(evaluations)
+      .leftJoin(jobs, eq(evaluations.jobId, jobs.id))
+      .where(eq(evaluations.userId, userId));
+
+    const gapsData = weakEvals.filter(e => e.score && parseFloat(e.score) < 3.5 && e.blockC);
+
+    if (gapsData.length === 0) {
+      return { analysis: "Not enough data yet. Once you have a few low-scoring job evaluations, the AI will synthesize your skill gaps here." };
+    }
+
+    const compiledGaps = gapsData.map(e => `Role: ${e.role} at ${e.company}\nScore: ${e.score}\nGaps identified by AI:\n${e.blockC}`).join('\n\n---\n\n');
+
+    const Anthropic = (await import('@anthropic-ai/sdk')).default;
+    const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+    const systemPrompt = `You are an elite Career Coach. 
+I will provide you with the "Level Strategy & Gaps" (Block C) from several AI evaluations where the candidate scored poorly (< 3.5).
+Your job is to read all of these gaps across different roles and synthesize a macro-level Skill Gap Analysis.
+Output exactly 3 sections in markdown:
+### 🚨 Critical Missing Skills
+(Bullet points of the most common hard/soft skills the candidate lacks for these roles)
+### 📉 Archetype Weaknesses
+(Identify which types of roles the candidate consistently fails to qualify for)
+### 📚 30-Day Study Plan
+(A concrete, actionable study plan to address the top 2 critical gaps)
+
+Be direct, analytical, and concise. Do not use filler introductions.`;
+
+    const msg = await anthropic.messages.create({
+      model: 'claude-3-haiku-20240307',
+      max_tokens: 1000,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: compiledGaps }],
+    });
+
+    return { analysis: msg.content[0].text };
+  });
 }
 
 
