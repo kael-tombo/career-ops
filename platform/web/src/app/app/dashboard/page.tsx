@@ -1,5 +1,6 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import styles from './page.module.css';
 import { useApi, fetchApi } from '@/lib/api';
 import { useAuth } from '@clerk/nextjs';
@@ -30,6 +31,12 @@ export default function DashboardPage() {
   const { data: jobs, error, isLoading, mutate } = useApi<Job[]>('/api/jobs');
   const { getToken } = useAuth();
   const [urlInput, setUrlInput] = useState('');
+  const [localJobs, setLocalJobs] = useState<Job[]>([]);
+
+  // Keep local state in sync with API
+  useEffect(() => {
+    if (jobs) setLocalJobs(jobs);
+  }, [jobs]);
 
   const handleAddJob = async () => {
     if (!urlInput) return;
@@ -48,13 +55,40 @@ export default function DashboardPage() {
   if (isLoading) return <div className={styles.page}>Loading pipeline...</div>;
   if (error) return <div className={styles.page}>Error loading pipeline.</div>;
 
-  const activeJobs = jobs || [];
+  const activeJobs = localJobs || [];
 
   const byStatus = activeJobs.reduce<Record<string, Job[]>>((acc, job) => {
     const col = COLUMNS.includes(job.status) ? job.status : 'Evaluated';
     acc[col] = [...(acc[col] || []), job];
     return acc;
   }, {});
+
+  const handleDragEnd = async (result: DropResult) => {
+    if (!result.destination) return;
+    
+    const sourceCol = result.source.droppableId;
+    const destCol = result.destination.droppableId;
+    if (sourceCol === destCol) return;
+
+    const jobId = result.draggableId;
+    
+    // Optimistic update
+    setLocalJobs((prev) => 
+      prev.map(j => j.id === jobId ? { ...j, status: destCol } : j)
+    );
+
+    // Persist
+    try {
+      await fetchApi(`/api/jobs/${jobId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status: destCol })
+      }, getToken);
+      mutate(); // Sync back with true server state
+    } catch (err) {
+      console.error('Failed to update status', err);
+      mutate(); // Revert on failure
+    }
+  };
 
   const stats = [
     { label: 'Total Tracked', value: activeJobs.length, icon: '📁', color: 'blue' },
@@ -105,39 +139,60 @@ export default function DashboardPage() {
       </div>
 
       {/* ── Kanban ────────────────────────────────────────────────────── */}
-      <div className={styles.kanban}>
-        {COLUMNS.map((col) => {
-          const colJobs = byStatus[col] || [];
-          return (
-            <div key={col} className={styles.kanbanCol}>
-              <div className={styles.kanbanHeader}>
-                <span className={styles.kanbanTitle}>{col}</span>
-                <span className={`badge badge-surface`}>{colJobs.length}</span>
-              </div>
-              <div className={styles.kanbanCards}>
-                {colJobs.map((job) => (
-                  <a key={job.id} href={`/app/jobs/${job.id}`} className={`${styles.jobCard} card`} id={`job-card-${job.id}`}>
-                    <div className={styles.jobCardTop}>
-                      <span className={styles.jobCompany}>{job.company}</span>
-                      {job.score && (
-                        <span className={styles.jobScore}>{job.score}</span>
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <div className={styles.kanban}>
+          {COLUMNS.map((col) => {
+            const colJobs = byStatus[col] || [];
+            return (
+              <div key={col} className={styles.kanbanCol}>
+                <div className={styles.kanbanHeader}>
+                  <span className={styles.kanbanTitle}>{col}</span>
+                  <span className={`badge badge-surface`}>{colJobs.length}</span>
+                </div>
+                <Droppable droppableId={col}>
+                  {(provided) => (
+                    <div 
+                      className={styles.kanbanCards}
+                      ref={provided.innerRef}
+                      {...provided.droppableProps}
+                    >
+                      {colJobs.map((job, index) => (
+                        <Draggable key={job.id} draggableId={job.id} index={index}>
+                          {(provided) => (
+                            <div
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                            >
+                              <a href={`/app/jobs/${job.id}`} className={`${styles.jobCard} card`} id={`job-card-${job.id}`}>
+                                <div className={styles.jobCardTop}>
+                                  <span className={styles.jobCompany}>{job.company}</span>
+                                  {job.score && (
+                                    <span className={styles.jobScore}>{job.score}</span>
+                                  )}
+                                </div>
+                                <div className={styles.jobRole}>{job.role}</div>
+                                <div className={styles.jobCardBottom}>
+                                  <span className={`badge badge-${STATUS_COLOR[job.status] || 'surface'}`}>{job.status}</span>
+                                  <span className={styles.jobDate}>{new Date(job.discoveredAt).toLocaleDateString()}</span>
+                                </div>
+                              </a>
+                            </div>
+                          )}
+                        </Draggable>
+                      ))}
+                      {provided.placeholder}
+                      {colJobs.length === 0 && (
+                        <div className={styles.kanbanEmpty}>Drop here</div>
                       )}
                     </div>
-                    <div className={styles.jobRole}>{job.role}</div>
-                    <div className={styles.jobCardBottom}>
-                      <span className={`badge badge-${STATUS_COLOR[job.status] || 'surface'}`}>{job.status}</span>
-                      <span className={styles.jobDate}>{new Date(job.discoveredAt).toLocaleDateString()}</span>
-                    </div>
-                  </a>
-                ))}
-                {colJobs.length === 0 && (
-                  <div className={styles.kanbanEmpty}>No jobs yet</div>
-                )}
+                  )}
+                </Droppable>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      </DragDropContext>
 
       {/* ── Recent Activity ───────────────────────────────────────────── */}
       <div className={styles.section}>

@@ -1,38 +1,69 @@
+'use client';
+import { useState } from 'react';
+import { useApi } from '@/lib/api';
 import styles from '../shared.module.css';
 
+interface Story {
+  title: string;
+  requirement: string;
+  s: string;
+  t: string;
+  a: string;
+  r: string;
+  reflection: string;
+  suggestedFor: { company: string; role: string }[];
+}
+
 export default function InterviewPrepPage() {
+  const { data: stories, isLoading } = useApi<Story[]>('/api/profile/stories');
+  const [expandedStory, setExpandedStory] = useState<string | null>(null);
+
   return (
     <div className={styles.page}>
       <div className={styles.header}>
         <div>
-          <h1 className={styles.title}>Interview Prep & Story Bank</h1>
-          <p className={styles.subtitle}>Accumulated behavioral answers and system design templates.</p>
+          <h1 className={styles.title}>Dynamic Story Bank</h1>
+          <p className={styles.subtitle}>Behavioral STAR+R stories extracted from your AI job evaluations.</p>
         </div>
       </div>
       
       <div className={styles.grid}>
-        <div className={`${styles.card} card`}>
-          <h2>STAR Stories</h2>
-          <p className={styles.muted}>Your generated behavioral stories linked to your top CV assets.</p>
+        <div className={`${styles.card} card`} style={{ gridColumn: '1 / -1' }}>
+          <h2>STAR+R Library</h2>
+          <p className={styles.muted}>Click a story to see the full Breakdown (Situation, Task, Action, Result, Reflection).</p>
+          
+          {isLoading && <p>Extracting stories from evaluations...</p>}
+          {!isLoading && stories?.length === 0 && <p>No stories found. Evaluate some jobs first!</p>}
+          
           <div className={styles.list}>
-             <div className={styles.listItem}>
-               <strong>Ambatovy IMS Migration</strong>
-               <span className="badge badge-surface">System Reliability</span>
-             </div>
-             <div className={styles.listItem}>
-               <strong>DDS.mg SaaS Delivery</strong>
-               <span className="badge badge-surface">DevOps / CI-CD</span>
-             </div>
-          </div>
-        </div>
-        
-        <div className={`${styles.card} card`}>
-          <h2>Negotiation Scripts</h2>
-          <p className={styles.muted}>Templates for geographic discount pushbacks and competing offer leverage.</p>
-          <div className={styles.list}>
-             <div className={styles.listItem}>
-               <strong>Remote-First Top Tier Competing</strong>
-             </div>
+             {stories?.map((story) => {
+               const isExpanded = expandedStory === story.title;
+               return (
+                 <div key={story.title} className={styles.listItem} style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
+                   <div 
+                     style={{ display: 'flex', justifyContent: 'space-between', width: '100%', cursor: 'pointer' }}
+                     onClick={() => setExpandedStory(isExpanded ? null : story.title)}
+                   >
+                     <strong>{story.title}</strong>
+                     <span className="badge badge-surface">{story.requirement}</span>
+                   </div>
+                   
+                   {isExpanded && (
+                     <div style={{ marginTop: '1rem', width: '100%', fontSize: '0.9rem', lineHeight: 1.5 }}>
+                        <p><strong>Situation:</strong> {story.s}</p>
+                        <p><strong>Task:</strong> {story.t}</p>
+                        <p><strong>Action:</strong> {story.a}</p>
+                        <p><strong>Result:</strong> {story.r}</p>
+                        <p style={{ color: 'var(--ctp-peach)' }}><strong>Reflection:</strong> {story.reflection}</p>
+                        
+                        <div style={{ marginTop: '1rem', fontSize: '0.8rem', color: 'var(--ctp-subtext0)' }}>
+                          <strong>Suggested for:</strong> {story.suggestedFor.map(j => `${j.company} (${j.role})`).join(', ')}
+                        </div>
+                     </div>
+                   )}
+                 </div>
+               );
+             })}
           </div>
         </div>
       </div>

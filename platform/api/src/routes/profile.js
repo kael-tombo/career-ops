@@ -31,4 +31,68 @@ export async function profileRoutes(app) {
       return created;
     }
   });
+
+  // GET /api/profile/stories — dynamic story bank from evaluations
+  app.get('/stories', { preHandler: [requireAuth] }, async (request) => {
+    const userId = request.user.dbId;
+
+    // We import evaluations and jobs dynamically to avoid circular dep if not already imported
+    const { evaluations, jobs } = await import('../db/schema.js');
+
+    const evals = await db
+      .select({
+        blockF: evaluations.blockF,
+        company: jobs.company,
+        role: jobs.role
+      })
+      .from(evaluations)
+      .leftJoin(jobs, eq(evaluations.jobId, jobs.id))
+      .where(eq(evaluations.userId, userId));
+
+    const stories = [];
+    const seenTitles = new Set();
+
+    for (const e of evals) {
+      if (!e.blockF) continue;
+
+      // Extract markdown table rows from blockF
+      // Typical format: | # | Requisito | Historia STAR+R | S | T | A | R | Reflection |
+      const rows = e.blockF.split('\n').filter(line => line.trim().startsWith('|'));
+      
+      // Skip header and separator rows
+      for (const row of rows.slice(2)) {
+        const cols = row.split('|').map(c => c.trim());
+        if (cols.length >= 8) {
+          const req = cols[2];
+          const title = cols[3];
+          const s = cols[4];
+          const t = cols[5];
+          const a = cols[6];
+          const r = cols[7];
+          const reflection = cols[8];
+
+          if (title && title !== 'Historia STAR+R' && title !== '---') {
+            if (!seenTitles.has(title)) {
+              seenTitles.add(title);
+              stories.push({
+                title,
+                requirement: req,
+                s, t, a, r, reflection,
+                suggestedFor: [{ company: e.company, role: e.role }]
+              });
+            } else {
+              // Add this job to the suggestedFor list for the existing story
+              const existing = stories.find(st => st.title === title);
+              if (existing) {
+                existing.suggestedFor.push({ company: e.company, role: e.role });
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return stories;
+  });
 }
+

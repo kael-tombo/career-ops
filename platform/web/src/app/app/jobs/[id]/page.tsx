@@ -1,4 +1,5 @@
 'use client';
+import { useState } from 'react';
 import { useApi, fetchApi } from '@/lib/api';
 import { useAuth } from '@clerk/nextjs';
 import styles from './page.module.css';
@@ -28,6 +29,8 @@ interface Job {
 export default function JobDetailPage({ params }: { params: { id: string } }) {
   const { data: job, error, isLoading, mutate } = useApi<Job>(`/api/jobs/${params.id}`);
   const { getToken } = useAuth();
+  const [outreachDraft, setOutreachDraft] = useState<string | null>(null);
+  const [isGeneratingOutreach, setIsGeneratingOutreach] = useState(false);
 
   if (isLoading) return <div className={styles.page}>Loading job details...</div>;
   if (error || !job) return <div className={styles.page}>Error loading job details.</div>;
@@ -53,6 +56,23 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
       mutate();
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const handleGenerateOutreach = async () => {
+    try {
+      setIsGeneratingOutreach(true);
+      const res = await fetchApi(`/api/jobs/${job.id}/outreach`, { method: 'POST' }, getToken);
+      setOutreachDraft(res.draft);
+    } catch (err: any) {
+      if (err?.message?.includes('402') || err?.message?.includes('UPGRADE')) {
+        alert('Smart Outreach requires a Pro plan. Upgrade in Settings.');
+      } else {
+        console.error(err);
+        alert('Failed to generate outreach draft.');
+      }
+    } finally {
+      setIsGeneratingOutreach(false);
     }
   };
 
@@ -121,6 +141,34 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
         <span className={styles.legIcon}>🔐</span>
         <span className={styles.legText}>{evalData.legitimacy || 'Checking legitimacy...'}</span>
         <span className="badge badge-green">{job.status}</span>
+      </div>
+
+      {/* ── Smart Outreach ────────────────────────────────────────────── */}
+      <div className={`${styles.block} card ${styles.blockWide}`} style={{ marginTop: '1rem', marginBottom: '2rem' }}>
+        <div className={styles.blockHeader}>
+          <span className={styles.blockIcon}>✉️</span>
+          <span className={styles.blockTitle}>Smart Outreach</span>
+          <button 
+            className="btn btn-primary btn-sm" 
+            style={{ marginLeft: 'auto' }}
+            onClick={handleGenerateOutreach}
+            disabled={isGeneratingOutreach}
+          >
+            {isGeneratingOutreach ? 'Generating...' : '✨ Generate Cold Email'}
+          </button>
+        </div>
+        <div className={styles.blockContent}>
+          {!outreachDraft ? (
+            <p className={styles.muted}>Generate a personalized cold email to the hiring manager based on your evaluation.</p>
+          ) : (
+            <textarea 
+              className="input" 
+              style={{ width: '100%', minHeight: '200px', fontFamily: 'var(--ctp-font-mono)', lineHeight: 1.5, padding: '1rem' }}
+              value={outreachDraft}
+              onChange={(e) => setOutreachDraft(e.target.value)}
+            />
+          )}
+        </div>
       </div>
 
       {/* ── Evaluation Blocks ─────────────────────────────────────────── */}
