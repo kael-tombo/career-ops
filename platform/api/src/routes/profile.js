@@ -1,6 +1,6 @@
 import { db } from '../db/client.js';
 import { profiles } from '../db/schema.js';
-import { eq } from 'drizzle-orm';
+import { eq, and, gte } from 'drizzle-orm';
 import { requireAuth } from '../middleware/auth.js';
 
 export async function profileRoutes(app) {
@@ -232,6 +232,88 @@ Focus on making the candidate look like an "A-Player" for their target roles.
     });
 
     return { analysis: msg.content[0].text };
+  });
+
+  // POST /api/profile/ingest-resume — AI resume-to-markdown conversion
+  app.post('/ingest-resume', { preHandler: [requireAuth] }, async (request) => {
+    const { rawText } = request.body;
+
+    const Anthropic = (await import('@anthropic-ai/sdk')).default;
+    const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+    const prompt = `
+You are an expert technical writer. Convert the following raw resume text into a clean, professional Markdown document.
+Follow this structure:
+# Name
+## Summary
+## Experience (Job Title, Company, Date, Bullets)
+## Education
+## Skills
+
+Raw Text:
+${rawText}
+
+Output ONLY the Markdown content. No introduction.
+    `;
+
+    const msg = await anthropic.messages.create({
+      model: 'claude-3-haiku-20240307',
+      max_tokens: 2000,
+      messages: [{ role: 'user', content: prompt }]
+    });
+
+    return { markdown: msg.content[0].text };
+  });
+
+  // GET /api/profile/narrative-suggestions — AI intelligence based on high scores
+  app.get('/narrative-suggestions', { preHandler: [requireAuth] }, async (request) => {
+    const userId = request.user.dbId;
+    const { evaluations, jobs } = await import('../db/schema.js');
+
+    // Find top-performing jobs
+    const topEvals = await db
+      .select({
+        blockB: evaluations.blockB,
+        blockE: evaluations.blockE,
+        role: jobs.role,
+        score: evaluations.score
+      })
+      .from(evaluations)
+      .leftJoin(jobs, eq(evaluations.jobId, jobs.id))
+      .where(and(eq(evaluations.userId, userId), gte(evaluations.score, '4.0')));
+
+    if (topEvals.length < 2) {
+      return { suggestion: "Not enough high-scoring data yet. Get a few 4.0+ evaluations to unlock narrative insights." };
+    }
+
+    const compiledEvidence = topEvals.map(e => `Role: ${e.role}\nScore: ${e.score}\nWhy it matched (Block B/E):\n${e.blockB}\n${e.blockE}`).join('\n\n---\n\n');
+
+    const Anthropic = (await import('@anthropic-ai/sdk')).default;
+    const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+    const prompt = `
+You are an elite career brand strategist.
+I am providing you with evidence from several high-scoring (4.0/5.0+) AI job evaluations for a candidate.
+These evaluations explain exactly why the candidate is an "A-Player" for these specific roles.
+
+Your task is to synthesize this evidence into a "Market-Proven Narrative".
+Output exactly 2 sections:
+### ⚡ Proven Superpowers
+(3 bullet points summarizing what the market consistently values about this candidate)
+### 💎 Key Proof Points
+(3 specific achievements or skills that high-value employers are looking for in this candidate)
+
+Evidence:
+${compiledEvidence}
+    `;
+
+    const msg = await anthropic.messages.create({
+      model: 'claude-3-haiku-20240307',
+      max_tokens: 1000,
+      messages: [{ role: 'user', content: prompt }]
+    });
+
+    return { suggestion: msg.content[0].text };
   });
 }
 

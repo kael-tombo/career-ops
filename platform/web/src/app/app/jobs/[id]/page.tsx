@@ -29,11 +29,14 @@ interface Job {
 export default function JobDetailPage({ params }: { params: { id: string } }) {
   const { data: job, error, isLoading, mutate } = useApi<Job>(`/api/jobs/${params.id}`);
   const { getToken } = useAuth();
-  const [activeTab, setActiveTab] = useState<'outreach' | 'coverLetter' | 'negotiation'>('outreach');
+  const [activeTab, setActiveTab] = useState<'outreach' | 'coverLetter' | 'negotiation' | 'network'>('outreach');
   const [outreachDraft, setOutreachDraft] = useState<string | null>(null);
   const [coverLetterDraft, setCoverLetterDraft] = useState<string | null>(null);
   const [negotiationDraft, setNegotiationDraft] = useState<string | null>(null);
   const [portfolioLink, setPortfolioLink] = useState<string | null>(null);
+  const [referralDraft, setReferralDraft] = useState<string | null>(null);
+  const [connectionName, setConnectionName] = useState('');
+  const [connectionContext, setConnectionContext] = useState('');
   const [offerDetails, setOfferDetails] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -115,6 +118,22 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
       setIsGenerating(false);
     }
   };
+
+  const handleGenerateReferral = async () => {
+    try {
+      setIsGenerating(true);
+      const res = await fetchApi(`/api/jobs/${job.id}/referral-request`, { 
+        method: 'POST',
+        body: JSON.stringify({ connectionName, context: connectionContext })
+      }, getToken);
+      setReferralDraft(res.draft);
+    } catch (err: any) {
+      alert(err.message || 'Failed to generate referral request.');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
 
 
   const evalData = job.evaluation || {} as Partial<Evaluation>;
@@ -217,6 +236,12 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
                 🤝 Negotiation
               </button>
             )}
+            <button 
+              className={activeTab === 'network' ? styles.activeTab : styles.tab} 
+              onClick={() => setActiveTab('network')}
+            >
+              🤝 Network
+            </button>
           </div>
           
           <div style={{ marginLeft: 'auto' }}>
@@ -233,6 +258,11 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
             {activeTab === 'negotiation' && (
               <button className="btn btn-primary btn-sm" onClick={handleGenerateNegotiation} disabled={isGenerating}>
                 {isGenerating ? 'Generating...' : '✨ Draft Response'}
+              </button>
+            )}
+            {activeTab === 'network' && (
+              <button className="btn btn-primary btn-sm" onClick={handleGenerateReferral} disabled={isGenerating}>
+                {isGenerating ? 'Generating...' : '✨ Draft Request'}
               </button>
             )}
           </div>
@@ -281,6 +311,36 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
                   style={{ width: '100%', minHeight: '250px', fontFamily: 'var(--ctp-font-mono)', lineHeight: 1.5, padding: '1rem', marginTop: '1rem' }}
                   value={negotiationDraft}
                   onChange={(e) => setNegotiationDraft(e.target.value)}
+                />
+              )}
+            </div>
+          )}
+
+          {activeTab === 'network' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <p className={styles.muted}>Draft a referral request to someone you know at {job.company}.</p>
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <input 
+                  className="input" 
+                  placeholder="Connection Name (e.g. John Doe)"
+                  style={{ flex: 1 }}
+                  value={connectionName}
+                  onChange={(e) => setConnectionName(e.target.value)}
+                />
+                <input 
+                  className="input" 
+                  placeholder="Context (e.g. Ex-colleague at Apple)"
+                  style={{ flex: 2 }}
+                  value={connectionContext}
+                  onChange={(e) => setConnectionContext(e.target.value)}
+                />
+              </div>
+              {referralDraft && (
+                <textarea 
+                  className="input" 
+                  style={{ width: '100%', minHeight: '250px', fontFamily: 'var(--ctp-font-mono)', lineHeight: 1.5, padding: '1rem', marginTop: '1rem' }}
+                  value={referralDraft}
+                  onChange={(e) => setReferralDraft(e.target.value)}
                 />
               )}
             </div>

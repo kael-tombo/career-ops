@@ -261,5 +261,47 @@ Instructions:
 
     return newPortfolio;
   });
+
+  // POST /api/jobs/:id/referral-request — generate referral request message
+  app.post('/:id/referral-request', { preHandler: [requireAuth, requirePlan('pro')] }, async (request, reply) => {
+    const { id } = request.params;
+    const userId = request.user.dbId;
+    const { connectionName, context } = request.body;
+
+    const [job] = await db.select().from(jobs).where(and(eq(jobs.id, id), eq(jobs.userId, userId)));
+    if (!job) return reply.code(404).send({ error: 'Not found' });
+
+    const { profiles } = await import('../db/schema.js');
+    const [profile] = await db.select().from(profiles).where(eq(profiles.userId, userId));
+    const [evalData] = await db.select().from(evaluations).where(eq(evaluations.jobId, id));
+
+    const Anthropic = (await import('@anthropic-ai/sdk')).default;
+    const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+    const prompt = `
+You are an expert networking coach. Help a candidate draft a referral request to a connection at ${job.company}.
+Connection Name: ${connectionName || 'N/A'}
+Relationship Context: ${context || 'Former colleague / Mutual connection'}
+Target Role: ${job.role}
+
+AI Evaluation of candidate fit (Match points):
+${evalData?.blockB || ''}
+
+Instructions:
+- Write a short, professional, and low-friction referral request.
+- Be humble and respectful of their time.
+- Briefly mention 1-2 key reasons why the candidate is a great fit (using Match points).
+- Ask if they would be comfortable submitting a referral or sharing an internal link.
+- Do NOT sound robotic. Keep it human and warm.
+`;
+
+    const msg = await anthropic.messages.create({
+      model: 'claude-3-haiku-20240307',
+      max_tokens: 600,
+      messages: [{ role: 'user', content: prompt }]
+    });
+
+    return { draft: msg.content[0].text };
+  });
 }
 

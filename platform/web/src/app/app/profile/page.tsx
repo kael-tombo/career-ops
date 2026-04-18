@@ -10,6 +10,7 @@ export default function ProfilePage() {
   
   const [cvMarkdown, setCvMarkdown] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const { data: narrativeData } = useApi<any>('/api/profile/narrative-suggestions');
 
   useEffect(() => {
     if (profile && profile.cvMarkdown) {
@@ -75,6 +76,18 @@ export default function ProfilePage() {
           placeholder="# John Doe\n\n## Experience\n\n### Senior Software Engineer\n..."
         />
       </div>
+
+      {narrativeData && (
+        <div className={`${styles.card} card`} style={{ marginTop: '2rem' }}>
+          <h2>📈 AI Narrative Insights</h2>
+          <p className={styles.muted} style={{ marginBottom: '1rem' }}>
+            Based on your top-performing job evaluations, here is how the market perceives your strengths.
+          </p>
+          <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6, color: 'var(--ctp-text)', backgroundColor: 'var(--ctp-crust)', padding: '1.5rem', borderRadius: '8px' }}>
+            {narrativeData.suggestion}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

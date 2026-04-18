@@ -38,6 +38,7 @@ export default function DashboardPage() {
 
 function DashboardContent() {
   const { data: jobs, error, isLoading, mutate } = useApi<Job[]>('/api/jobs');
+  const { data: profile } = useApi<any>('/api/profile');
   const { getToken } = useAuth();
   const [urlInput, setUrlInput] = useState('');
   const [localJobs, setLocalJobs] = useState<Job[]>([]);
@@ -50,6 +51,13 @@ function DashboardContent() {
   useEffect(() => {
     if (jobs) setLocalJobs(jobs);
   }, [jobs]);
+
+  // Check for onboarding
+  useEffect(() => {
+    if (profile && !profile.cvMarkdown) {
+      router.push('/app/onboarding');
+    }
+  }, [profile, router]);
 
   // Handle bookmarklet import
   useEffect(() => {
