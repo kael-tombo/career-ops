@@ -41,6 +41,8 @@ function DashboardContent() {
   const { getToken } = useAuth();
   const [urlInput, setUrlInput] = useState('');
   const [localJobs, setLocalJobs] = useState<Job[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [minScore, setMinScore] = useState('');
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -75,7 +77,21 @@ function DashboardContent() {
   if (isLoading) return <div className={styles.page}>Loading pipeline...</div>;
   if (error) return <div className={styles.page}>Error loading pipeline.</div>;
 
-  const activeJobs = localJobs || [];
+  let activeJobs = localJobs || [];
+
+  if (searchQuery) {
+    const lowerQ = searchQuery.toLowerCase();
+    activeJobs = activeJobs.filter(j => 
+      j.company.toLowerCase().includes(lowerQ) || j.role.toLowerCase().includes(lowerQ)
+    );
+  }
+
+  if (minScore) {
+    const min = parseFloat(minScore);
+    if (!isNaN(min)) {
+      activeJobs = activeJobs.filter(j => j.score && parseFloat(j.score) >= min);
+    }
+  }
 
   const byStatus = activeJobs.reduce<Record<string, Job[]>>((acc, job) => {
     const col = COLUMNS.includes(job.status) ? job.status : 'Evaluated';
@@ -156,6 +172,37 @@ function DashboardContent() {
           onChange={(e) => setUrlInput(e.target.value)}
         />
         <button className="btn btn-primary btn-sm" id="btn-evaluate-url" onClick={handleAddJob}>Evaluate with AI</button>
+      </div>
+
+      {/* ── Filters ────────────────────────────────────────────────────── */}
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', alignItems: 'center' }}>
+        <input 
+          type="text" 
+          className="input" 
+          placeholder="🔍 Search company or role..." 
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={{ flex: 1, maxWidth: '400px' }}
+        />
+        <select 
+          className="input" 
+          value={minScore} 
+          onChange={(e) => setMinScore(e.target.value)}
+          style={{ width: '180px' }}
+        >
+          <option value="">All Scores</option>
+          <option value="4.0">≥ 4.0 (Great Fit)</option>
+          <option value="3.0">≥ 3.0 (Good Fit)</option>
+          <option value="2.0">≥ 2.0 (Okay Fit)</option>
+        </select>
+        {(searchQuery || minScore) && (
+          <button 
+            className="btn btn-ghost btn-sm" 
+            onClick={() => { setSearchQuery(''); setMinScore(''); }}
+          >
+            Clear Filters
+          </button>
+        )}
       </div>
 
       {/* ── Kanban ────────────────────────────────────────────────────── */}

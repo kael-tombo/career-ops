@@ -3,7 +3,7 @@ import { readFileSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { db } from '../db/client.js';
-import { jobs, evaluations, users } from '../db/schema.js';
+import { jobs, evaluations, users, profiles } from '../db/schema.js';
 import { eq } from 'drizzle-orm';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -21,13 +21,18 @@ function loadMode(path) {
 export async function runEvaluation({ jobId, userId, url, jdText }) {
   const [job] = await db.select().from(jobs).where(eq(jobs.id, jobId));
   const [user] = await db.select().from(users).where(eq(users.id, userId));
+  const [profile] = await db.select().from(profiles).where(eq(profiles.userId, userId));
   if (!job || !user) throw new Error('Job or user not found');
 
   // Build the prompt from shared career-ops modes
   const sharedContext = loadMode(SHARED_MODE);
   const ofertaMode = loadMode(OFERTA_MODE);
 
-  const systemPrompt = `${sharedContext}\n\n${ofertaMode}`;
+  const cvContext = profile?.cvMarkdown 
+    ? `\n\n<cv_md>\n${profile.cvMarkdown}\n</cv_md>\n\nIMPORTANT: Use the candidate's CV provided in the <cv_md> tags above instead of looking for a local file.`
+    : `\n\nWARNING: No CV profile provided. Evaluate the job generically.`;
+
+  const systemPrompt = `${sharedContext}\n\n${ofertaMode}${cvContext}`;
 
   const userMessage = url
     ? `Evaluate this job posting: ${url}`

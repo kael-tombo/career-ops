@@ -1,14 +1,8 @@
 import { readFileSync, existsSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
 import yaml from 'js-yaml';
 import { db } from '../db/client.js';
-import { jobs, scanRuns } from '../db/schema.js';
+import { jobs, scanRuns, profiles } from '../db/schema.js';
 import { eq, and } from 'drizzle-orm';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-// Reuse the portals.yml from the parent career-ops repo
-const PORTALS_YML = join(__dirname, '../../../../portals.yml');
 
 /**
  * runScan({ userId, scanRunId })
@@ -20,16 +14,18 @@ export async function runScan({ userId, scanRunId }) {
   let jobsNew = 0;
 
   try {
-    if (!existsSync(PORTALS_YML)) {
-      console.warn('⚠️  portals.yml not found, skipping scan');
+    const [profile] = await db.select().from(profiles).where(eq(profiles.userId, userId));
+    
+    if (!profile || !profile.portalsConfig) {
+      console.warn(`⚠️  No portalsConfig found for user ${userId}, skipping scan`);
       await db.update(scanRuns)
-        .set({ status: 'done', jobsFound: 0, jobsNew: 0, completedAt: new Date(), error: 'portals.yml not found' })
+        .set({ status: 'done', jobsFound: 0, jobsNew: 0, completedAt: new Date(), error: 'No portals configured' })
         .where(eq(scanRuns.id, scanRunId));
       return;
     }
 
-    const portalsRaw = readFileSync(PORTALS_YML, 'utf-8');
-    const portals = yaml.load(portalsRaw);
+    const portalsRaw = profile.portalsConfig;
+    const portals = yaml.load(portalsRaw) || {};
 
     const entries = Array.isArray(portals)
       ? portals
