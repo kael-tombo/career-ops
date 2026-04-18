@@ -59,6 +59,26 @@ await app.register(cvRoutes, { prefix: '/api/cv' });
 await app.register(subscriptionsRoutes, { prefix: '/api/subscriptions' });
 await app.register(profileRoutes, { prefix: '/api/profile' });
 await app.register(interviewRoutes, { prefix: '/api/interview' });
+await app.register((await import('./routes/public.js')).publicRoutes, { prefix: '/api/public' });
+
+// ── Socket.io ────────────────────────────────────────────────────────────────
+const { Server } = await import('socket.io');
+const io = new Server(app.server, {
+  cors: {
+    origin: process.env.WEB_URL || 'http://localhost:3000',
+    credentials: true,
+  }
+});
+
+app.decorate('io', io);
+
+io.on('connection', (socket) => {
+  const userId = socket.handshake.query.userId;
+  if (userId) {
+    socket.join(userId);
+    console.log(`📡 User ${userId} connected to real-time stream`);
+  }
+});
 
 // ── Health ────────────────────────────────────────────────────────────────────
 app.get('/health', async () => ({ status: 'ok', version: '1.0.0', ts: new Date().toISOString() }));
@@ -67,7 +87,7 @@ app.get('/health', async () => ({ status: 'ok', version: '1.0.0', ts: new Date()
 const PORT = Number(process.env.PORT) || 3002;
 
 try {
-  await startWorkers();
+  await startWorkers(app.io);
   await app.listen({ port: PORT, host: '0.0.0.0' });
   console.log(`\n🚀 Career-Ops Cloud API running on port ${PORT}\n`);
 } catch (err) {

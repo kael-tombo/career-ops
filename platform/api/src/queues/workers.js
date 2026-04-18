@@ -4,7 +4,7 @@ import { runEvaluation } from '../services/evaluation.js';
 import { runScan } from '../services/scanner.js';
 import { runPdfGeneration } from '../services/pdf.js';
 
-export async function startWorkers() {
+export async function startWorkers(io) {
   // ── Evaluation Worker ───────────────────────────────────────────────────────
   const evalWorker = new Worker(
     'evaluations',
@@ -15,7 +15,14 @@ export async function startWorkers() {
     { connection: redisConnection, concurrency: 3 }
   );
 
-  evalWorker.on('completed', (job) => console.log(`✅ Evaluation done: ${job.data.jobId}`));
+  evalWorker.on('completed', (job) => {
+    console.log(`✅ Evaluation done: ${job.data.jobId}`);
+    io?.to(job.data.userId).emit('notification', {
+      type: 'EVALUATION_COMPLETE',
+      message: `Evaluation finished for ${job.data.company || 'job'}`,
+      jobId: job.data.jobId
+    });
+  });
   evalWorker.on('failed', (job, err) => console.error(`❌ Evaluation failed: ${job?.data.jobId}`, err.message));
 
   // ── Scan Worker ─────────────────────────────────────────────────────────────
@@ -28,7 +35,13 @@ export async function startWorkers() {
     { connection: redisConnection, concurrency: 1 }
   );
 
-  scanWorker.on('completed', (job) => console.log(`✅ Scan done for user: ${job.data.userId}`));
+  scanWorker.on('completed', (job) => {
+    console.log(`✅ Scan done for user: ${job.data.userId}`);
+    io?.to(job.data.userId).emit('notification', {
+      type: 'SCAN_COMPLETE',
+      message: `Portal scan finished! New jobs found.`
+    });
+  });
   scanWorker.on('failed', (job, err) => console.error(`❌ Scan failed:`, err.message));
 
   // ── PDF Worker ──────────────────────────────────────────────────────────────
@@ -41,7 +54,14 @@ export async function startWorkers() {
     { connection: redisConnection, concurrency: 2 }
   );
 
-  pdfWorker.on('completed', (job) => console.log(`✅ PDF done: ${job.data.jobId}`));
+  pdfWorker.on('completed', (job) => {
+    console.log(`✅ PDF done: ${job.data.jobId}`);
+    io?.to(job.data.userId).emit('notification', {
+      type: 'PDF_READY',
+      message: `CV PDF is ready for download.`,
+      jobId: job.data.jobId
+    });
+  });
   pdfWorker.on('failed', (job, err) => console.error(`❌ PDF failed:`, err.message));
 
   console.log('🔄 BullMQ workers started (eval × 3, scan × 1, pdf × 2)');

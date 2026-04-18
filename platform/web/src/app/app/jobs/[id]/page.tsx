@@ -33,6 +33,7 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
   const [outreachDraft, setOutreachDraft] = useState<string | null>(null);
   const [coverLetterDraft, setCoverLetterDraft] = useState<string | null>(null);
   const [negotiationDraft, setNegotiationDraft] = useState<string | null>(null);
+  const [portfolioLink, setPortfolioLink] = useState<string | null>(null);
   const [offerDetails, setOfferDetails] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -103,6 +104,19 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
     }
   };
 
+  const handleGeneratePortfolio = async () => {
+    try {
+      setIsGenerating(true);
+      const res = await fetchApi(`/api/jobs/${job.id}/portfolio`, { method: 'POST' }, getToken);
+      setPortfolioLink(`${window.location.origin}/p/${res.slug}`);
+    } catch (err: any) {
+      alert(err.message || 'Failed to generate portfolio.');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+
   const evalData = job.evaluation || {} as Partial<Evaluation>;
   const blocks = [
     { id: 'A', title: 'Role Summary', content: evalData.blockA || 'Pending evaluation...', icon: '📋' },
@@ -158,10 +172,19 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
 
           <div className={styles.actions}>
             <button className="btn btn-primary btn-sm" id="btn-generate-cv" onClick={handleGenerateCV}>📄 Generate CV</button>
+            <button className="btn btn-primary btn-sm" id="btn-generate-portfolio" onClick={handleGeneratePortfolio}>🚀 Share Portfolio</button>
             <button className="btn btn-ghost btn-sm" id="btn-mark-applied" onClick={handleMarkApplied}>✅ Mark Applied</button>
           </div>
         </div>
       </div>
+
+      {portfolioLink && (
+        <div className={`${styles.legitimacyBar} card`} style={{ backgroundColor: 'var(--ctp-blue)', color: 'var(--ctp-crust)', fontWeight: 800 }}>
+          <span>🚀 Public Portfolio Link:</span>
+          <a href={portfolioLink} target="_blank" rel="noreferrer" style={{ color: 'var(--ctp-crust)', textDecoration: 'underline' }}>{portfolioLink}</a>
+          <button className="btn btn-ghost btn-sm" style={{ color: 'var(--ctp-crust)', marginLeft: 'auto' }} onClick={() => { navigator.clipboard.writeText(portfolioLink); alert('Copied!'); }}>Copy Link</button>
+        </div>
+      )}
 
       {/* ── Legitimacy bar ───────────────────────────────────────────── */}
       <div className={`${styles.legitimacyBar} card`}>

@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import styles from './layout.module.css';
 import Sidebar from './Sidebar';
+import RealtimeNotifications from './RealtimeNotifications';
+
 export const metadata: Metadata = {
   title: 'Dashboard — Career-Ops Cloud',
 };
@@ -15,6 +17,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <main className={styles.main}>
         {children}
       </main>
+
+      {/* ── Real-time Overlay ────────────────────────────────────────── */}
+      <RealtimeNotifications />
     </div>
   );
 }

@@ -198,6 +198,41 @@ Be direct, analytical, and concise. Do not use filler introductions.`;
 
     return { analysis: msg.content[0].text };
   });
+
+  // POST /api/profile/optimize-linkedin — AI branding suggestions
+  app.post('/optimize-linkedin', { preHandler: [requireAuth] }, async (request) => {
+    const userId = request.user.dbId;
+    const { linkedinContent } = request.body;
+    const [profile] = await db.select().from(profiles).where(eq(profiles.userId, userId));
+
+    const Anthropic = (await import('@anthropic-ai/sdk')).default;
+    const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+    const prompt = `
+You are an expert LinkedIn branding consultant.
+The candidate is targeting these roles: ${profile?.targetRoles || 'Senior Engineering roles'}.
+Candidate Narrative: ${profile?.narrative || 'High-performance delivery'}.
+
+Here is the candidate's current LinkedIn content:
+${linkedinContent}
+
+Provide an "Elite Branding Report" with:
+1. **Branding Alignment Score** (0-100)
+2. **Optimized Headline** (220 characters max)
+3. **Optimized "About" Section** (Compelling, narrative-driven)
+4. **Key Bullet Point Adjustments** (Choose 2 existing bullets and rewrite them for maximum impact)
+
+Focus on making the candidate look like an "A-Player" for their target roles.
+    `;
+
+    const msg = await anthropic.messages.create({
+      model: 'claude-3-haiku-20240307',
+      max_tokens: 1500,
+      messages: [{ role: 'user', content: prompt }]
+    });
+
+    return { analysis: msg.content[0].text };
+  });
 }
 
 

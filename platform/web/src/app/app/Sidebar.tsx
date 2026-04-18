@@ -8,6 +8,7 @@ const NAV_ITEMS = [
   { href: '/app/scan',       icon: '🔍', label: 'Scan Portals' },
   { href: '/app/analytics',  icon: '📊', label: 'Analytics' },
   { href: '/app/profile',    icon: '📝', label: 'Master Profile' },
+  { href: '/app/profile/linkedin', icon: '🎨', label: 'LinkedIn Optimizer' },
   { href: '/app/cv',         icon: '📄', label: 'My CVs' },
   { href: '/app/interview',  icon: '🎯', label: 'Interview Prep' },
   { href: '/app/settings',   icon: '⚙',  label: 'Settings' },

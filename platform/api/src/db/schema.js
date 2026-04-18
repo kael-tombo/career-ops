@@ -103,3 +103,17 @@ export const scanRuns = pgTable('scan_runs', {
   startedAt: timestamp('started_at').defaultNow(),
   completedAt: timestamp('completed_at'),
 });
+
+// Portfolios — public shareable evidence pages
+export const portfolios = pgTable('portfolios', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  jobId: uuid('job_id').notNull().references(() => jobs.id, { onDelete: 'cascade' }),
+  slug: text('slug').notNull().unique(),
+  title: text('title').notNull(),
+  cvContent: text('cv_content'),
+  starStories: jsonb('star_stories'),
+  theme: text('theme').default('dark'),
+  isPublic: boolean('is_public').default(true),
+  createdAt: timestamp('created_at').defaultNow(),
+});

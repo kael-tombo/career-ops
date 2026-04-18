@@ -219,5 +219,47 @@ Instructions:
 
     return { draft: msg.content[0].text };
   });
+
+  // POST /api/jobs/:id/portfolio — generate public portfolio link
+  app.post('/:id/portfolio', { preHandler: [requireAuth, requirePlan('elite')] }, async (request, reply) => {
+    const { id } = request.params;
+    const userId = request.user.dbId;
+    const { portfolios, profiles, evaluations } = await import('../db/schema.js');
+
+    const [job] = await db.select().from(jobs).where(and(eq(jobs.id, id), eq(jobs.userId, userId)));
+    if (!job) return reply.code(404).send({ error: 'Not found' });
+
+    // Dedupe
+    const [existing] = await db.select().from(portfolios).where(eq(portfolios.jobId, id));
+    if (existing) return existing;
+
+    const [profile] = await db.select().from(profiles).where(eq(profiles.userId, userId));
+    const [evalData] = await db.select().from(evaluations).where(eq(evaluations.jobId, id));
+
+    // Simple STAR parser for portfolio
+    const stories = [];
+    if (evalData?.blockF) {
+      const rows = evalData.blockF.split('\n').filter(line => line.trim().startsWith('|'));
+      for (const row of rows.slice(2)) {
+        const cols = row.split('|').map(c => c.trim());
+        if (cols.length >= 8 && cols[3] && cols[3] !== '---') {
+          stories.push({ title: cols[3], requirement: cols[2], star: `${cols[4]} ${cols[5]} ${cols[6]} ${cols[7]}` });
+        }
+      }
+    }
+
+    const slug = `${job.company.toLowerCase().replace(/\s+/g, '-')}-${Math.random().toString(36).substring(2, 7)}`;
+
+    const [newPortfolio] = await db.insert(portfolios).values({
+      userId,
+      jobId: id,
+      slug,
+      title: `${profile?.fullName || 'Candidate'} — ${job.company} Portfolio`,
+      cvContent: profile?.cvMarkdown,
+      starStories: stories.slice(0, 3), // Top 3
+    }).returning();
+
+    return newPortfolio;
+  });
 }
 

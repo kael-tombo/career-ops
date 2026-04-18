@@ -1,0 +1,96 @@
+.portfolioPage {
+  min-height: 100vh;
+  background-color: var(--ctp-base);
+  color: var(--ctp-text);
+  padding: 60px 20px;
+  font-family: var(--ctp-font-sans);
+}
+
+.header {
+  max-width: 800px;
+  margin: 0 auto 60px;
+  text-align: center;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 900;
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+}
+
+.badge {
+  display: inline-block;
+  background: var(--ctp-blue);
+  color: var(--ctp-crust);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.main {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+}
+
+.sectionTitle {
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 24px;
+  color: var(--ctp-blue);
+  border-bottom: 1px solid var(--ctp-surface0);
+  padding-bottom: 8px;
+}
+
+.cvContent {
+  line-height: 1.8;
+  color: var(--ctp-subtext1);
+}
+
+.stories {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.storyCard {
+  background: var(--ctp-surface0);
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid var(--ctp-surface1);
+}
+
+.storyTitle {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 12px;
+  color: var(--ctp-mauve);
+}
+
+.storyReq {
+  font-size: 13px;
+  color: var(--ctp-overlay2);
+  margin-bottom: 12px;
+}
+
+.storyText {
+  line-height: 1.6;
+  color: var(--ctp-text);
+}
+
+.footer {
+  margin-top: 80px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--ctp-overlay0);
+}
+
+.logo {
+  font-weight: 800;
+  color: var(--ctp-blue);
+}
