@@ -3,7 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useDashboard } from '@/components/useDashboard';
 import { fetchReportContent } from '@/lib/api';
-import { FileText, ArrowLeft, Search } from 'lucide-react';
+import { FileText, ArrowLeft, Search, Download } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 export default function ReportsPage() {
   const { data, loading } = useDashboard();
@@ -22,14 +24,27 @@ export default function ReportsPage() {
   ).reverse();
 
   if (selected) {
+    const pdfFilename = selected.replace(/\.md$/, '.pdf');
     return (
       <div className="space-y-4">
-        <button onClick={() => setSelected(null)} className="inline-flex items-center gap-2 text-sm text-[var(--color-primary-light)] hover:underline">
-          <ArrowLeft size={16} /> Back to reports
-        </button>
+        <div className="flex items-center justify-between">
+          <button onClick={() => setSelected(null)} className="inline-flex items-center gap-2 text-sm text-[var(--color-primary-light)] hover:underline">
+            <ArrowLeft size={16} /> Back to reports
+          </button>
+          <a
+            href={`http://localhost:3001/api/pdf/${encodeURIComponent(pdfFilename)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--color-primary)]/10 text-sm text-[var(--color-primary-light)] hover:bg-[var(--color-primary)]/20 transition-all"
+          >
+            <Download size={14} /> Download PDF
+          </a>
+        </div>
         <h1 className="text-2xl font-bold text-white">{selected}</h1>
-        <div className="glass rounded-xl p-6 text-sm leading-relaxed whitespace-pre-wrap font-mono">
-          {content}
+        <div className="glass rounded-xl p-6 text-sm leading-relaxed prose prose-invert max-w-none">
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            {content}
+          </ReactMarkdown>
         </div>
       </div>
     );

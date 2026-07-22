@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { fetchDashboardData } from '@/lib/api';
+import { fetchDashboardData, subscribeToEvents } from '@/lib/api';
 import type { DashboardData } from '@/lib/types';
 
 export function useDashboard(refreshInterval = 30000) {
@@ -24,7 +24,22 @@ export function useDashboard(refreshInterval = 30000) {
   useEffect(() => {
     refresh();
     const interval = setInterval(refresh, refreshInterval);
-    return () => clearInterval(interval);
+
+    const unsub = subscribeToEvents({
+      onScanResults: () => {
+        refresh();
+      },
+      onJobUpdate: (job) => {
+        if (job.state === 'completed') {
+          refresh();
+        }
+      },
+    });
+
+    return () => {
+      clearInterval(interval);
+      unsub();
+    };
   }, [refresh, refreshInterval]);
 
   return { data, loading, lastUpdate, refresh };

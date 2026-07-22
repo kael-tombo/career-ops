@@ -1,12 +1,17 @@
 'use client';
 
+'use client';
+
+import { useState } from 'react';
 import { useDashboard } from '@/components/useDashboard';
 import StatCard from '@/components/StatCard';
 import OverviewCharts from '@/components/OverviewCharts';
 import RecentActivity from '@/components/RecentActivity';
+import { CheckCircle2, XCircle, ChevronDown, ChevronRight } from 'lucide-react';
 
 export default function OverviewPage() {
   const { data, loading } = useDashboard();
+  const [storyExpanded, setStoryExpanded] = useState(false);
 
   if (loading || !data) {
     return (
@@ -33,6 +38,11 @@ export default function OverviewPage() {
   const elite = apps.filter(a => safeScore(a.score) >= 4).length;
   const avgScore = total > 0 ? (apps.reduce((s, a) => s + safeScore(a.score), 0) / total).toFixed(1) : '0.0';
   const conversionRate = evaluated > 0 ? Math.round((applied / evaluated) * 100) : 0;
+
+  const diag = data.diagnostics;
+
+  const storyContent = data.storyBank;
+  const storySnippet = storyContent.replace(/^#\s+.*$/m, '').trim().slice(0, 200);
 
   return (
     <div className="space-y-8">
@@ -76,6 +86,46 @@ export default function OverviewPage() {
           ))}
         </div>
       </div>
+
+      {diag && (
+        <div className="glass rounded-xl p-6">
+          <h3 className="text-sm font-semibold text-white mb-4">System Health</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { label: 'Environment', ok: diag.env === 'OK' || diag.env !== undefined },
+              { label: 'CV', ok: !!diag.cv },
+              { label: 'Profile', ok: !!diag.profile },
+              { label: 'Portals', ok: !!diag.portals },
+            ].map((check) => (
+              <div key={check.label} className="flex items-center gap-2 p-3 rounded-lg bg-[var(--color-surface)]">
+                {check.ok ? (
+                  <CheckCircle2 size={16} className="text-[var(--color-green)] shrink-0" />
+                ) : (
+                  <XCircle size={16} className="text-[var(--color-red)] shrink-0" />
+                )}
+                <span className="text-xs text-[var(--color-text-muted)]">{check.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {storyContent && storyContent !== '# No stories found' && (
+        <div className="glass rounded-xl p-6">
+          <h3 className="text-sm font-semibold text-white mb-4">Story Bank</h3>
+          <div className="text-xs text-[var(--color-text-muted)] leading-relaxed whitespace-pre-wrap">
+            {storyExpanded ? storyContent : storySnippet + (storyContent.length > 200 ? '...' : '')}
+          </div>
+          {storyContent.length > 200 && (
+            <button
+              onClick={() => setStoryExpanded(!storyExpanded)}
+              className="inline-flex items-center gap-1 mt-3 text-xs text-[var(--color-primary-light)] hover:underline"
+            >
+              {storyExpanded ? <><ChevronDown size={12} /> Show less</> : <><ChevronRight size={12} /> Read more</>}
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

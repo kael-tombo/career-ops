@@ -3,8 +3,10 @@ import fs from 'fs';
 import { join, extname } from 'path';
 import { execSync, exec } from 'child_process';
 import yaml from 'js-yaml';
+import { JobQueue } from './lib/queue.mjs';
 
-const PORT = 3001;
+const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3001;
+const HOST = process.env.HOST || '0.0.0.0';
 const ROOT = process.cwd();
 const DASHBOARD_DIR = join(ROOT, 'dashboard/web/dist');
 
@@ -31,6 +33,16 @@ function getApplications() {
     const lines = content.split('\n').slice(4).filter(l => l.trim().startsWith('|'));
     return lines.map(l => {
         const cols = l.split('|').map(c => c.trim());
+        let url = '';
+        const reportMatch = cols[8]?.match(/\(([^)]+)\)/);
+        if (reportMatch) {
+            const reportPath = join(ROOT, reportMatch[1]);
+            try {
+                const reportContent = fs.readFileSync(reportPath, 'utf-8');
+                const urlMatch = reportContent.match(/\*\*URL:\*\* (.+)/);
+                if (urlMatch) url = urlMatch[1].trim();
+            } catch {}
+        }
         return {
             id: cols[1],
             date: cols[2],
@@ -40,7 +52,8 @@ function getApplications() {
             status: cols[6],
             pdf: cols[7],
             report: cols[8],
-            notes: cols[9]
+            notes: cols[9],
+            url
         };
     });
 }
@@ -137,6 +150,8 @@ function serveStatic(res, filePath) {
     }
     return true;
 }
+
+const queue = new JobQueue({ maxConcurrency: 2 });
 
 const server = http.createServer((req, res) => {
     // CORS
@@ -260,7 +275,8 @@ const server = http.createServer((req, res) => {
                 cv: fs.existsSync(join(ROOT, 'cv.md')),
                 profile: fs.existsSync(join(ROOT, 'config/profile.yml')),
                 node_modules: fs.existsSync(join(ROOT, 'node_modules')),
-                portals: fs.existsSync(join(ROOT, 'portals.yml'))
+                portals: fs.existsSync(join(ROOT, 'portals.yml')),
+                queue: queue.getStatus()
             };
             res.setHeader('Content-Type', 'application/json');
             res.end(JSON.stringify(checks));
@@ -290,20 +306,118 @@ const server = http.createServer((req, res) => {
                 res.writeHead(404);
                 res.end(JSON.stringify({ error: 'PDF not found' }));
             }
-        } else if (path === '/api/scan' && req.method === 'POST') {
-            console.log('⚡ Triggering Portal Scan...');
-            try {
-                execSync('node scan-portals.mjs', { stdio: 'inherit' });
-                res.setHeader('Content-Type', 'application/json');
-                res.end(JSON.stringify({ success: true, message: 'Scan complete' }));
-            } catch (e) {
-                res.writeHead(500);
-                res.setHeader('Content-Type', 'application/json');
-                res.end(JSON.stringify({ error: e.message }));
-            }
         } else if (path === '/api/evaluate' && req.method === 'POST') {
             res.setHeader('Content-Type', 'application/json');
             res.end(JSON.stringify({ success: true, message: 'Evaluation logic coming soon' }));
+        } else if (path === '/api/jobs' && req.method === 'POST') {
+            let body = '';
+            req.on('data', chunk => { body += chunk; });
+            req.on('end', () => {
+                try {
+                    const { type, payload } = JSON.parse(body);
+                    const jobId = queue.addJob(type, payload || {});
+                    res.setHeader('Content-Type', 'application/json');
+                    res.end(JSON.stringify({ jobId }));
+                } catch (e) {
+                    res.writeHead(400);
+                    res.setHeader('Content-Type', 'application/json');
+                    res.end(JSON.stringify({ error: e.message }));
+                }
+            });
+        } else if (path === '/api/jobs' && req.method === 'GET') {
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify({
+                history: queue.getHistory(),
+                active: queue.getActiveJobs()
+            }));
+        } else if (path.startsWith('/api/jobs/') && req.method === 'GET') {
+            const jobId = path.split('/').pop();
+            const job = queue.getJobStatus(jobId);
+            if (job) {
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify(job));
+            } else {
+                res.writeHead(404);
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ error: 'Job not found' }));
+            }
+        } else if (path === '/api/scan' && req.method === 'POST') {
+            let body = '';
+            req.on('data', chunk => { body += chunk; });
+            req.on('end', () => {
+                try {
+                    const params = body ? JSON.parse(body) : {};
+                    const jobId = queue.addJob('scan', { region: params.region || '' });
+                    res.setHeader('Content-Type', 'application/json');
+                    res.end(JSON.stringify({ jobId }));
+                } catch (e) {
+                    res.writeHead(400);
+                    res.setHeader('Content-Type', 'application/json');
+                    res.end(JSON.stringify({ error: e.message }));
+                }
+            });
+        } else if (path === '/api/tailor' && req.method === 'POST') {
+            let body = '';
+            req.on('data', chunk => { body += chunk; });
+            req.on('end', () => {
+                try {
+                    const params = JSON.parse(body);
+                    const jobId = queue.addJob('tailor', { id: params.id });
+                    res.setHeader('Content-Type', 'application/json');
+                    res.end(JSON.stringify({ jobId }));
+                } catch (e) {
+                    res.writeHead(400);
+                    res.setHeader('Content-Type', 'application/json');
+                    res.end(JSON.stringify({ error: e.message }));
+                }
+            });
+        } else if (path === '/api/prep-form' && req.method === 'POST') {
+            let body = '';
+            req.on('data', chunk => { body += chunk; });
+            req.on('end', () => {
+                try {
+                    const params = JSON.parse(body);
+                    const jobId = queue.addJob('prep-form', { id: params.id });
+                    res.setHeader('Content-Type', 'application/json');
+                    res.end(JSON.stringify({ jobId }));
+                } catch (e) {
+                    res.writeHead(400);
+                    res.setHeader('Content-Type', 'application/json');
+                    res.end(JSON.stringify({ error: e.message }));
+                }
+            });
+        } else if (path === '/api/liveness' && req.method === 'POST') {
+            let body = '';
+            req.on('data', chunk => { body += chunk; });
+            req.on('end', () => {
+                try {
+                    const params = JSON.parse(body);
+                    const jobId = queue.addJob('liveness-check', { urls: params.urls || [] });
+                    res.setHeader('Content-Type', 'application/json');
+                    res.end(JSON.stringify({ jobId }));
+                } catch (e) {
+                    res.writeHead(400);
+                    res.setHeader('Content-Type', 'application/json');
+                    res.end(JSON.stringify({ error: e.message }));
+                }
+            });
+        } else if (path === '/api/events' && req.method === 'GET') {
+            queue.subscribe(req, res);
+        } else if (path === '/api/scan-history' && req.method === 'GET') {
+            const historyPath = join(ROOT, 'data/scan-history.tsv');
+            if (fs.existsSync(historyPath)) {
+                const content = fs.readFileSync(historyPath, 'utf-8');
+                const lines = content.split('\n').filter(l => l.trim());
+                const rows = lines.map(line => {
+                    const cols = line.split('\t');
+                    return { url: cols[0], date: cols[1], portal: cols[2], title: cols[3], company: cols[4], status: cols[5] };
+                });
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify(rows));
+            } else {
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify([]));
+            }
         } else {
             res.writeHead(404);
             res.setHeader('Content-Type', 'application/json');
@@ -317,6 +431,6 @@ const server = http.createServer((req, res) => {
     }
 });
 
-server.listen(PORT, () => {
-    console.log(`🚀 Career-Ops Elite Server (v2.0) running at http://localhost:3001`);
+server.listen(PORT, HOST, () => {
+    console.log(`🚀 Career-Ops Elite Server (v2.0) running on port ${PORT}`);
 });

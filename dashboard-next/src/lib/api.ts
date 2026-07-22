@@ -1,6 +1,6 @@
-import type { Application, PipelineItem, ReportMeta, Profile, PrepMeta, Diagnostics, DashboardData } from './types';
+import type { Application, PipelineItem, ReportMeta, Profile, PrepMeta, Diagnostics, DashboardData, JobStatus, ScanHistoryEntry } from './types';
 
-const API = 'http://localhost:3001';
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 async function safeJson<T>(res: Response, fallback: T): Promise<T> {
   try { return await res.json(); } catch { return fallback; }
@@ -8,6 +8,81 @@ async function safeJson<T>(res: Response, fallback: T): Promise<T> {
 
 async function safeText(res: Response, fallback: string): Promise<string> {
   try { return await res.text(); } catch { return fallback; }
+}
+
+export async function submitScan(region?: string): Promise<{ jobId: string }> {
+  try {
+    const res = await fetch(`${API}/api/scan${region ? `?region=${encodeURIComponent(region)}` : ''}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (!res.ok) return { jobId: '' };
+    return safeJson(res, { jobId: '' });
+  } catch { return { jobId: '' }; }
+}
+
+export async function submitTailor(id: string): Promise<{ jobId: string }> {
+  try {
+    const res = await fetch(`${API}/api/tailor/${encodeURIComponent(id)}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (!res.ok) return { jobId: '' };
+    return safeJson(res, { jobId: '' });
+  } catch { return { jobId: '' }; }
+}
+
+export async function submitPrep(id: string): Promise<{ jobId: string }> {
+  try {
+    const res = await fetch(`${API}/api/prep-form/${encodeURIComponent(id)}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (!res.ok) return { jobId: '' };
+    return safeJson(res, { jobId: '' });
+  } catch { return { jobId: '' }; }
+}
+
+export async function getJobs(): Promise<JobStatus[]> {
+  try {
+    const res = await fetch(`${API}/api/jobs`, { cache: 'no-store' });
+    if (!res.ok) return [];
+    return safeJson(res, []);
+  } catch { return []; }
+}
+
+export async function getJobStatus(jobId: string): Promise<JobStatus | null> {
+  try {
+    const res = await fetch(`${API}/api/jobs/${encodeURIComponent(jobId)}`, { cache: 'no-store' });
+    if (!res.ok) return null;
+    return safeJson(res, null);
+  } catch { return null; }
+}
+
+export async function fetchScanHistory(): Promise<ScanHistoryEntry[]> {
+  try {
+    const res = await fetch(`${API}/api/scan-history`, { cache: 'no-store' });
+    if (!res.ok) return [];
+    return safeJson(res, []);
+  } catch { return []; }
+}
+
+export function subscribeToEvents(callbacks: {
+  onJobUpdate?: (job: JobStatus) => void;
+  onScanResults?: (data: { count: number; platform: string; company: string }) => void;
+}): () => void {
+  let es: EventSource | null = null;
+  try {
+    es = new EventSource(`${API}/api/events`);
+    es.addEventListener('job:queued', (e: MessageEvent) => callbacks.onJobUpdate?.(JSON.parse(e.data)));
+    es.addEventListener('job:running', (e: MessageEvent) => callbacks.onJobUpdate?.(JSON.parse(e.data)));
+    es.addEventListener('job:completed', (e: MessageEvent) => callbacks.onJobUpdate?.(JSON.parse(e.data)));
+    es.addEventListener('job:failed', (e: MessageEvent) => callbacks.onJobUpdate?.(JSON.parse(e.data)));
+    es.addEventListener('scan:results', (e: MessageEvent) => callbacks.onScanResults?.(JSON.parse(e.data)));
+  } catch {
+    // EventSource not available
+  }
+  return () => { if (es) es.close(); };
 }
 
 export async function fetchApplications(): Promise<Application[]> {

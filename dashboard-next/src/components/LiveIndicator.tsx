@@ -7,18 +7,55 @@ export default function LiveIndicator() {
   const [time, setTime] = useState('');
 
   useEffect(() => {
-    const check = async () => {
+    let es: EventSource | null = null;
+    let pollingInterval: ReturnType<typeof setInterval> | null = null;
+    let cancelled = false;
+
+    const trySSE = () => {
       try {
-        const res = await fetch('http://localhost:3001/api/diagnostics');
-        setOnline(res.ok);
+        es = new EventSource('http://localhost:3001/api/events');
+        es.onopen = () => {
+          if (!cancelled) {
+            setOnline(true);
+            setTime(new Date().toLocaleTimeString());
+          }
+        };
+        es.onerror = () => {
+          if (!cancelled) {
+            es?.close();
+            es = null;
+            startPolling();
+          }
+        };
       } catch {
-        setOnline(false);
+        if (!cancelled) startPolling();
       }
-      setTime(new Date().toLocaleTimeString());
     };
-    check();
-    const interval = setInterval(check, 15000);
-    return () => clearInterval(interval);
+
+    const startPolling = () => {
+      if (cancelled) return;
+      const check = async () => {
+        try {
+          const res = await fetch('http://localhost:3001/api/diagnostics');
+          if (!cancelled) {
+            setOnline(res.ok);
+            setTime(new Date().toLocaleTimeString());
+          }
+        } catch {
+          if (!cancelled) setOnline(false);
+        }
+      };
+      check();
+      pollingInterval = setInterval(check, 15000);
+    };
+
+    trySSE();
+
+    return () => {
+      cancelled = true;
+      if (es) es.close();
+      if (pollingInterval) clearInterval(pollingInterval);
+    };
   }, []);
 
   return (

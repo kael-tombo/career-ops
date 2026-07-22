@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 import LiveIndicator from "@/components/LiveIndicator";
+import ScanAllButton from "@/components/ScanAllButton";
+import JobStatusBar from "@/components/JobStatusBar";
 
 export const metadata: Metadata = {
   title: "Career-Ops | AI Job Dashboard",
@@ -21,6 +23,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Sidebar />
           <main className="flex-1 overflow-y-auto p-6 lg:p-8">
             <div className="mx-auto max-w-7xl">
+              <div className="flex items-center justify-between mb-6">
+                <JobStatusBar />
+                <ScanAllButton />
+              </div>
               {children}
             </div>
           </main>

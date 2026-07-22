@@ -8,6 +8,7 @@ export interface Application {
   pdf: string;
   report: string;
   notes: string;
+  url?: string;
 }
 
 export interface PipelineItem {
@@ -68,4 +69,22 @@ export interface DashboardData {
   preps: PrepMeta[];
   storyBank: string;
   diagnostics: Diagnostics | null;
+}
+
+export interface JobStatus {
+  id: string;
+  type: 'scan' | 'evaluate' | 'tailor' | 'prep-form' | 'liveness-check';
+  state: 'queued' | 'running' | 'completed' | 'failed';
+  payload: Record<string, unknown>;
+  result?: string;
+  error?: string;
+  createdAt: string;
+  completedAt?: string;
+}
+
+export interface ScanHistoryEntry {
+  url: string;
+  company?: string;
+  date?: string;
+  source?: string;
 }

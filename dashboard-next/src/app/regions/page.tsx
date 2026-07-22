@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Globe, Search } from 'lucide-react';
+import { Globe, Search, Play, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { submitScan } from '@/lib/api';
 
 const REGIONS_CONFIG: Record<string, { label: string; countries: string[]; count?: number }> = {
   'middle-east': { label: 'Middle East & North Africa', countries: ['UAE', 'Dubai', 'Qatar', 'Saudi Arabia', 'Bahrain', 'Kuwait', 'Oman', 'Egypt', 'Morocco', 'Israel'] },
@@ -14,11 +15,28 @@ const REGIONS_CONFIG: Record<string, { label: string; countries: string[]; count
 
 export default function RegionsPage() {
   const [search, setSearch] = useState('');
+  const [scanning, setScanning] = useState<string | null>(null);
+  const [scanResult, setScanResult] = useState<string | null>(null);
 
   const filtered = Object.entries(REGIONS_CONFIG).filter(([key, reg]) =>
     !search || reg.label.toLowerCase().includes(search.toLowerCase()) ||
     reg.countries.some(c => c.toLowerCase().includes(search.toLowerCase()))
   );
+
+  const handleScan = async (regionKey: string) => {
+    setScanning(regionKey);
+    setScanResult(null);
+    const result = await submitScan(regionKey);
+    if (result.jobId) {
+      setScanResult('queued');
+    } else {
+      setScanResult('started');
+    }
+    setTimeout(() => {
+      setScanning(null);
+      setScanResult(null);
+    }, 4000);
+  };
 
   return (
     <div className="space-y-6">
@@ -58,10 +76,23 @@ export default function RegionsPage() {
                 </span>
               ))}
             </div>
-            <div className="mt-4 pt-3 border-t border-[var(--color-border)]">
+            <div className="mt-4 pt-3 border-t border-[var(--color-border)] flex items-center justify-between">
               <code className="text-xs text-[var(--color-primary-light)]">
                 node search-region.mjs {key}
               </code>
+              <button
+                onClick={() => handleScan(key)}
+                disabled={scanning === key}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-[var(--color-primary)]/10 text-[var(--color-primary-light)] hover:bg-[var(--color-primary)]/20 disabled:opacity-50 transition-all"
+              >
+                {scanning === key ? (
+                  <><Loader2 size={12} className="animate-spin" /> Scanning...</>
+                ) : scanResult === key ? (
+                  <><CheckCircle2 size={12} className="text-[var(--color-green)]" /> Done</>
+                ) : (
+                  <><Play size={12} /> Scan Now</>
+                )}
+              </button>
             </div>
           </div>
         ))}
