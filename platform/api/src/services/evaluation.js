@@ -38,12 +38,26 @@ export async function runEvaluation({ jobId, userId, url, jdText }) {
     ? `Evaluate this job posting: ${url}`
     : `Evaluate this job description:\n\n${jdText}`;
 
-  const message = await client.messages.create({
-    model: 'claude-opus-4-5',
-    max_tokens: 4096,
-    system: systemPrompt,
-    messages: [{ role: 'user', content: userMessage }],
-  });
+  let message;
+  let modelUsed = 'claude-3-5-sonnet-20240620';
+
+  try {
+    message = await client.messages.create({
+      model: modelUsed,
+      max_tokens: 4096,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userMessage }],
+    });
+  } catch (err) {
+    console.warn(`⚠️  Primary model (${modelUsed}) failed, falling back to Haiku:`, err.message);
+    modelUsed = 'claude-3-haiku-20240307';
+    message = await client.messages.create({
+      model: modelUsed,
+      max_tokens: 4096,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userMessage }],
+    });
+  }
 
   const rawMarkdown = message.content[0].text;
 
@@ -100,7 +114,7 @@ export async function runEvaluation({ jobId, userId, url, jdText }) {
     blockF,
     blockG,
     rawMarkdown,
-    model: 'claude-opus-4-5',
+    model: modelUsed,
     tokens: (message.usage?.input_tokens ?? 0) + (message.usage?.output_tokens ?? 0),
   }).returning();
 

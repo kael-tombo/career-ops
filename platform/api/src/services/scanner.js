@@ -9,7 +9,7 @@ import { eq, and } from 'drizzle-orm';
  * Reads portals.yml, checks each portal for new job listings,
  * and inserts newly discovered ones into the jobs table.
  */
-export async function runScan({ userId, scanRunId }) {
+export async function runScan({ userId, scanRunId, io }) {
   let jobsFound = 0;
   let jobsNew = 0;
 
@@ -31,8 +31,23 @@ export async function runScan({ userId, scanRunId }) {
       ? portals
       : portals?.portals ?? portals?.companies ?? Object.values(portals).flat();
 
+    const total = entries.length;
+    let current = 0;
+
     for (const portal of entries) {
+      current++;
       const company = portal.company || portal.name || 'Unknown';
+      
+      // Emit progress
+      if (io) {
+        io.to(userId).emit('scan_progress', {
+          current,
+          total,
+          company,
+          scanRunId
+        });
+      }
+
       const source = portal.source || portal.ats || 'manual';
       const roles = Array.isArray(portal.roles) ? portal.roles : [];
 

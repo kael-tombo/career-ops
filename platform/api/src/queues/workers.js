@@ -3,6 +3,7 @@ import { redisConnection } from './connection.js';
 import { runEvaluation } from '../services/evaluation.js';
 import { runScan } from '../services/scanner.js';
 import { runPdfGeneration } from '../services/pdf.js';
+import { checkLiveness } from '../services/liveness.js';
 
 export async function startWorkers(io) {
   // ── Evaluation Worker ───────────────────────────────────────────────────────
@@ -30,7 +31,7 @@ export async function startWorkers(io) {
     'scans',
     async (job) => {
       console.log(`🔍 Scanning portals for user ${job.data.userId}`);
-      await runScan(job.data);
+      await runScan({ ...job.data, io });
     },
     { connection: redisConnection, concurrency: 1 }
   );
@@ -64,5 +65,20 @@ export async function startWorkers(io) {
   });
   pdfWorker.on('failed', (job, err) => console.error(`❌ PDF failed:`, err.message));
 
-  console.log('🔄 BullMQ workers started (eval × 3, scan × 1, pdf × 2)');
+  // ── Liveness Worker ─────────────────────────────────────────────────────────
+  const livenessWorker = new Worker(
+    'liveness',
+    async (job) => {
+      console.log(`🔍 Checking liveness for job ${job.data.jobId}`);
+      await checkLiveness(job.data);
+    },
+    { connection: redisConnection, concurrency: 2 }
+  );
+
+  livenessWorker.on('completed', (job) => {
+    console.log(`✅ Liveness check done: ${job.data.jobId}`);
+  });
+  livenessWorker.on('failed', (job, err) => console.error(`❌ Liveness failed:`, err.message));
+
+  console.log('🔄 BullMQ workers started (eval × 3, scan × 1, pdf × 2, liveness × 2)');
 }

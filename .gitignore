@@ -25,11 +25,21 @@ modes/_profile.md
 # Generated
 .resolved-prompt-*
 node_modules/
+data/linkedin_state.json
+output/tailored-*.html
 
 # OS
 .DS_Store
 *.mov
 *.mp4
+
+# Generated / binary
+*.exe
+*.bak
+test_output.txt
+
+# User-specific
+.qwen/
 
 # Claude Code local
 .claude/settings.local.json

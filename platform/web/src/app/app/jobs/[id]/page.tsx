@@ -24,17 +24,19 @@ interface Job {
   url: string | null;
   status: string;
   evaluation?: Evaluation;
+  powerScore?: number;
 }
 
 export default function JobDetailPage({ params }: { params: { id: string } }) {
   const { data: job, error, isLoading, mutate } = useApi<Job>(`/api/jobs/${params.id}`);
   const { getToken } = useAuth();
-  const [activeTab, setActiveTab] = useState<'outreach' | 'coverLetter' | 'negotiation' | 'network'>('outreach');
+  const [activeTab, setActiveTab] = useState<'outreach' | 'coverLetter' | 'negotiation' | 'network' | 'prep'>('outreach');
   const [outreachDraft, setOutreachDraft] = useState<string | null>(null);
   const [coverLetterDraft, setCoverLetterDraft] = useState<string | null>(null);
   const [negotiationDraft, setNegotiationDraft] = useState<string | null>(null);
   const [portfolioLink, setPortfolioLink] = useState<string | null>(null);
   const [referralDraft, setReferralDraft] = useState<string | null>(null);
+  const [prepAnalysis, setPrepAnalysis] = useState<string | null>(null);
   const [connectionName, setConnectionName] = useState('');
   const [connectionContext, setConnectionContext] = useState('');
   const [offerDetails, setOfferDetails] = useState('');
@@ -134,6 +136,21 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
     }
   };
 
+  const handleGeneratePrep = async () => {
+    try {
+      setIsGenerating(true);
+      const [questionsRes, intelRes] = await Promise.all([
+        fetchApi(`/api/interview/${job.id}/predicted-questions`, { method: 'GET' }, getToken),
+        fetchApi(`/api/jobs/${job.id}/company-intel`, { method: 'GET' }, getToken),
+      ]);
+      setPrepAnalysis(`${questionsRes.analysis}\n\n---\n\n${intelRes.analysis}`);
+    } catch (err: any) {
+      alert(err.message || 'Failed to generate interview prep.');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
 
 
   const evalData = job.evaluation || {} as Partial<Evaluation>;
@@ -189,6 +206,23 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
             </div>
           </div>
 
+          {job.powerScore && (
+            <div className={styles.scoreRing} style={{ marginLeft: '1rem' }}>
+              <svg width="100" height="100" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="44" fill="none" stroke="var(--ctp-surface1)" strokeWidth="8"/>
+                <circle cx="50" cy="50" r="44" fill="none" stroke="var(--ctp-peach)" strokeWidth="8"
+                  strokeDasharray={circumference} strokeDashoffset={circumference - (job.powerScore / 100) * circumference}
+                  strokeLinecap="round" style={{transform:'rotate(-90deg)', transformOrigin:'50% 50%', transition:'stroke-dashoffset 1s ease'}}
+                />
+              </svg>
+              <div className={styles.scoreText}>
+                <span className={styles.scoreNum} style={{ color: 'var(--ctp-peach)' }}>{job.powerScore}</span>
+                <span className={styles.scoreDenom} style={{ color: 'var(--ctp-peach)' }}>%</span>
+                <div style={{ fontSize: '0.6rem', position: 'absolute', bottom: '-15px', whiteSpace: 'nowrap', color: 'var(--ctp-peach)' }}>Power</div>
+              </div>
+            </div>
+          )}
+
           <div className={styles.actions}>
             <button className="btn btn-primary btn-sm" id="btn-generate-cv" onClick={handleGenerateCV}>📄 Generate CV</button>
             <button className="btn btn-primary btn-sm" id="btn-generate-portfolio" onClick={handleGeneratePortfolio}>🚀 Share Portfolio</button>
@@ -242,6 +276,12 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
             >
               🤝 Network
             </button>
+            <button 
+              className={activeTab === 'prep' ? styles.activeTab : styles.tab} 
+              onClick={() => setActiveTab('prep')}
+            >
+              🎯 Interview Prep
+            </button>
           </div>
           
           <div style={{ marginLeft: 'auto' }}>
@@ -263,6 +303,11 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
             {activeTab === 'network' && (
               <button className="btn btn-primary btn-sm" onClick={handleGenerateReferral} disabled={isGenerating}>
                 {isGenerating ? 'Generating...' : '✨ Draft Request'}
+              </button>
+            )}
+            {activeTab === 'prep' && (
+              <button className="btn btn-primary btn-sm" onClick={handleGeneratePrep} disabled={isGenerating}>
+                {isGenerating ? 'Synthesizing...' : '🧠 Prep Me'}
               </button>
             )}
           </div>
@@ -296,19 +341,38 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
           )}
 
           {activeTab === 'negotiation' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <p className={styles.muted}>Paste the offer details (salary, equity, benefits) to draft a negotiation response.</p>
-              <textarea 
-                className="input" 
-                placeholder="Paste offer email or details here..."
-                style={{ width: '100%', minHeight: '100px', padding: '1rem' }}
-                value={offerDetails}
-                onChange={(e) => setOfferDetails(e.target.value)}
-              />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div style={{ display: 'flex', gap: '1.5rem' }}>
+                <div style={{ flex: 1 }}>
+                  <p className={styles.muted}>Paste the offer details (salary, equity, benefits) to draft a negotiation response.</p>
+                  <textarea 
+                    className="input" 
+                    placeholder="Paste offer email or details here..."
+                    style={{ width: '100%', minHeight: '100px', padding: '1rem', marginTop: '0.5rem' }}
+                    value={offerDetails}
+                    onChange={(e) => setOfferDetails(e.target.value)}
+                  />
+                </div>
+                {job.powerScore && (
+                  <div className="card" style={{ width: '250px', display: 'flex', flexDirection: 'column', gap: '0.75rem', padding: '1rem', borderLeft: '4px solid var(--ctp-peach)' }}>
+                     <h3 style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--ctp-peach)' }}>Tactical Leverage</h3>
+                     <div style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--ctp-peach)' }}>{job.powerScore}%</div>
+                     <p style={{ fontSize: '0.8rem', lineHeight: 1.4 }}>
+                        {job.powerScore > 75 ? (
+                          "🚀 **High Leverage:** Your profile is a perfect match and this is a high-demand archetype. Negotiate aggressively for equity and sign-on bonus."
+                        ) : job.powerScore > 50 ? (
+                          "⚖️ **Moderate Leverage:** Good match. Use market data from Block D to anchor the conversation. Focus on base salary alignment."
+                        ) : (
+                          "🤝 **Low Leverage:** Market is competitive. Focus on cultural fit and long-term growth. Use a collaborative tone in negotiation."
+                        )}
+                     </p>
+                  </div>
+                )}
+              </div>
               {negotiationDraft && (
                 <textarea 
                   className="input" 
-                  style={{ width: '100%', minHeight: '250px', fontFamily: 'var(--ctp-font-mono)', lineHeight: 1.5, padding: '1rem', marginTop: '1rem' }}
+                  style={{ width: '100%', minHeight: '250px', fontFamily: 'var(--ctp-font-mono)', lineHeight: 1.5, padding: '1rem' }}
                   value={negotiationDraft}
                   onChange={(e) => setNegotiationDraft(e.target.value)}
                 />
@@ -344,6 +408,16 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
                 />
               )}
             </div>
+          )}
+
+          {activeTab === 'prep' && (
+            !prepAnalysis ? (
+              <p className={styles.muted}>Generate predicted questions and strategic hooks for your interview.</p>
+            ) : (
+              <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6, color: 'var(--ctp-text)', fontSize: '0.95rem' }}>
+                {prepAnalysis}
+              </div>
+            )
           )}
         </div>
       </div>

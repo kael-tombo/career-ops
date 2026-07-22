@@ -15,6 +15,7 @@ import { execSync } from 'child_process';
 import { readFileSync, existsSync, readdirSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { tmpdir } from 'os';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = __dirname;
@@ -83,11 +84,18 @@ for (const { name, allowFail } of scripts) {
 
 if (!QUICK) {
   console.log('\n3. Dashboard build');
-  const goBuild = run('cd dashboard && go build -o /tmp/career-dashboard-test . 2>&1');
-  if (goBuild !== null) {
-    pass('Dashboard compiles');
+  const goInstalled = run('go version');
+  if (!goInstalled) {
+    warn('Dashboard build skipped — Go not found on PATH (install Go to enable this check)');
   } else {
-    fail('Dashboard build failed');
+    const dashDir = join(ROOT, 'dashboard');
+    const tmpOut = join(tmpdir(), 'career-dashboard-test');
+    const goBuild = run(`go build -o "${tmpOut}" .`, { cwd: dashDir });
+    if (goBuild !== null) {
+      pass('Dashboard compiles');
+    } else {
+      fail('Dashboard build failed');
+    }
   }
 } else {
   console.log('\n3. Dashboard build (skipped --quick)');

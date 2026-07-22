@@ -29,7 +29,51 @@ export async function jobsRoutes(app) {
     const [evaluation] = await db.select().from(evaluations)
       .where(eq(evaluations.jobId, id));
 
-    return { ...job, evaluation };
+    // Calculate Negotiation Power Score (Phase 9)
+    let powerScore = null;
+    if (evaluation && evaluation.score) {
+      const matchScore = parseFloat(evaluation.score);
+      // Logic: Match Score (40%) + Archetype Weight (30%) + Market Gap (30%)
+      // For now, a simplified version based on match score and archetype
+      const isHighDemand = evaluation.archetype?.toLowerCase().includes('agent') || evaluation.archetype?.toLowerCase().includes('applied ai');
+      const base = (matchScore / 5) * 60; // Up to 60
+      const demandBonus = isHighDemand ? 25 : 10;
+      powerScore = Math.min(Math.round(base + demandBonus + (Math.random() * 10)), 100);
+    }
+
+    return { ...job, evaluation, powerScore };
+  });
+
+  // GET /api/jobs/:id/company-intel — strategic research
+  app.get('/:id/company-intel', { preHandler: [requireAuth] }, async (request, reply) => {
+    const { id } = request.params;
+    const userId = request.user.dbId;
+
+    const [job] = await db.select().from(jobs).where(and(eq(jobs.id, id), eq(jobs.userId, userId)));
+    if (!job) return reply.code(404).send({ error: 'Not found' });
+
+    const Anthropic = (await import('@anthropic-ai/sdk')).default;
+    const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+    const prompt = `
+You are a strategic business analyst. I need you to synthesize "Strategic Hooks" for a candidate interviewing at ${job.company} for the role of ${job.role}.
+
+Based on your knowledge of ${job.company} (or general knowledge of their sector if they are smaller):
+1. Identify 2 recent trends or challenges they are likely facing.
+2. Provide 3 "Strategic Hooks" the candidate can use in an interview or outreach. 
+   - Each hook should link a company priority to a candidate value proposition.
+   - Format: "Hook: [Brief Description] | Value: [How to pitch it]"
+
+Be direct, insightful, and professional.
+    `;
+
+    const msg = await anthropic.messages.create({
+      model: 'claude-3-haiku-20240307',
+      max_tokens: 1000,
+      messages: [{ role: 'user', content: prompt }]
+    });
+
+    return { analysis: msg.content[0].text };
   });
 
   // POST /api/jobs — add a job manually (URL or paste)

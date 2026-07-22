@@ -20,6 +20,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { SocketProvider } from '@/components/SocketProvider';
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <ClerkProvider>
@@ -28,7 +30,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
         </head>
-        <body>{children}</body>
+        <body>
+          <SocketProvider>
+            {children}
+          </SocketProvider>
+        </body>
       </html>
     </ClerkProvider>
   );

@@ -4,6 +4,7 @@ import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea
 import { useSearchParams, useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import { useApi, fetchApi } from '@/lib/api';
+import { useSocket } from '@/components/SocketProvider';
 import { useAuth } from '@clerk/nextjs';
 
 const STATUS_COLOR: Record<string, string> = {
@@ -40,6 +41,7 @@ function DashboardContent() {
   const { data: jobs, error, isLoading, mutate } = useApi<Job[]>('/api/jobs');
   const { data: profile } = useApi<any>('/api/profile');
   const { getToken } = useAuth();
+  const { scanProgress } = useSocket();
   const [urlInput, setUrlInput] = useState('');
   const [localJobs, setLocalJobs] = useState<Job[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -181,6 +183,31 @@ function DashboardContent() {
         />
         <button className="btn btn-primary btn-sm" id="btn-evaluate-url" onClick={handleAddJob}>Evaluate with AI</button>
       </div>
+
+      {/* ── Scan Progress ────────────────────────────────────────────────── */}
+      {scanProgress && (
+        <div className={`${styles.scanOverlay} card glass`}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <span className={styles.pulse} />
+              <span style={{ fontWeight: 800, fontSize: '0.9rem' }}>Portal Scan in Progress...</span>
+            </div>
+            <span style={{ fontSize: '0.8rem', color: 'var(--ctp-subtext0)' }}>
+              {scanProgress.current} / {scanProgress.total} portals
+            </span>
+          </div>
+          <div className={styles.progressBarBg}>
+            <div 
+              className={styles.progressBarFill} 
+              style={{ width: `${(scanProgress.current / scanProgress.total) * 100}%` }} 
+            />
+          </div>
+          <div style={{ marginTop: '0.5rem', fontSize: '0.8rem', display: 'flex', gap: '0.5rem' }}>
+            <span style={{ color: 'var(--ctp-overlay0)' }}>Scanning:</span>
+            <span style={{ fontWeight: 700, color: 'var(--ctp-blue)' }}>{scanProgress.company}</span>
+          </div>
+        </div>
+      )}
 
       {/* ── Filters ────────────────────────────────────────────────────── */}
       <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', alignItems: 'center' }}>

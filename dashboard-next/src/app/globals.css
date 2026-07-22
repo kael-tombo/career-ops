@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-background: #0f0f1a;
+  --color-surface: #1a1a2e;
+  --color-surface-hover: #222240;
+  --color-border: #2a2a4a;
+  --color-primary: #6c5ce7;
+  --color-primary-light: #a29bfe;
+  --color-accent: #00cec9;
+  --color-green: #00b894;
+  --color-yellow: #fdcb6e;
+  --color-red: #e17055;
+  --color-lavender: #a29bfe;
+  --color-peach: #fab1a0;
+  --color-blue: #74b9ff;
+  --color-text: #dfe6e9;
+  --color-text-muted: #636e72;
+  --color-card: #1e1e36;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: 'Outfit', 'Segoe UI', system-ui, sans-serif;
+}
+
+.glass {
+  background: rgba(30, 30, 54, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--color-border);
+}
+
+.stat-num {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.stat-desc {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-blue { background: rgba(116, 185, 255, 0.15); color: var(--color-blue); }
+.badge-lavender { background: rgba(162, 155, 254, 0.15); color: var(--color-lavender); }
+.badge-green { background: rgba(0, 184, 148, 0.15); color: var(--color-green); }
+.badge-peach { background: rgba(250, 177, 160, 0.15); color: var(--color-peach); }
+.badge-red { background: rgba(225, 112, 85, 0.15); color: var(--color-red); }
+
+.status-select {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  color: var(--color-text);
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.status-select:focus { outline: none; border-color: var(--color-primary); }
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-green);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+.live-dot-offline {
+  background: var(--color-text-muted);
+  animation: none;
+}
+
+.progress-bar {
+  height: 4px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.5s ease;
+}

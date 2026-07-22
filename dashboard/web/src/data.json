@@ -1,0 +1,218 @@
+[
+  {
+    "id": "002",
+    "date": "2026-04-11",
+    "company": "Airtable",
+    "role": "Software Engineer, Compute (8+ YOE)",
+    "score": "2.5/5",
+    "status": "❌ Descartada"
+  },
+  {
+    "id": "003",
+    "date": "2026-04-11",
+    "company": "Airtable",
+    "role": "Software Engineer, Infrastructure (2-8 YOE)",
+    "score": "2.5/5",
+    "status": "❌ Descartada"
+  },
+  {
+    "id": "004",
+    "date": "2026-04-11",
+    "company": "Anthropic",
+    "role": "Integrations Developer",
+    "score": "2.5/5",
+    "status": "❌ Descartada"
+  },
+  {
+    "id": "005",
+    "date": "2026-04-11",
+    "company": "Anthropic",
+    "role": "Finance Systems Integration Engineer",
+    "score": "2.0/5",
+    "status": "❌ Descartada"
+  },
+  {
+    "id": "006",
+    "date": "2026-04-11",
+    "company": "Contentful",
+    "role": "Senior Technical Enablement Architect (US)",
+    "score": "3.0/5",
+    "status": "❌ Descartada"
+  },
+  {
+    "id": "007",
+    "date": "2026-04-11",
+    "company": "Contentful",
+    "role": "Senior Technical Enablement Architect (London)",
+    "score": "2.5/5",
+    "status": "❌ Descartada"
+  },
+  {
+    "id": "008",
+    "date": "2026-04-11",
+    "company": "Wrike",
+    "role": "Senior/Staff Backend Engineer — Talent Pool",
+    "score": "4.0/5",
+    "status": "🎯 Aplicar"
+  },
+  {
+    "id": "009",
+    "date": "2026-04-11",
+    "company": "Wrike",
+    "role": "Staff Software Engineer (Backend Reliability)",
+    "score": "3.5/5",
+    "status": "🎯 Aplicar"
+  },
+  {
+    "id": "010",
+    "date": "2026-04-11",
+    "company": "Adyen",
+    "role": "Senior Software Engineer (Java) — Madrid",
+    "score": "4.5/5",
+    "status": "✅ Enviada"
+  },
+  {
+    "id": "011",
+    "date": "2026-04-11",
+    "company": "Adyen",
+    "role": "Senior Software Engineer (Java) - Financial Products — Amsterdam",
+    "score": "4.5/5",
+    "status": "✅ Enviada"
+  },
+  {
+    "id": "012",
+    "date": "2026-04-11",
+    "company": "Doctolib",
+    "role": "Sr Software Engineer (Java) - Prevention & Care — Paris",
+    "score": "3.5/5",
+    "status": "🎯 Aplicar"
+  },
+  {
+    "id": "013",
+    "date": "2026-04-11",
+    "company": "Adyen",
+    "role": "Senior SWE (Java) × 5 — Chicago US (Batch)",
+    "score": "2.0/5",
+    "status": "SKIP"
+  },
+  {
+    "id": "014",
+    "date": "2026-04-11",
+    "company": "Doctolib",
+    "role": "Senior SWE (JVM/Ruby/React) — Berlin",
+    "score": "2.5/5",
+    "status": "SKIP"
+  },
+  {
+    "id": "015",
+    "date": "2026-04-11",
+    "company": "Zalando",
+    "role": "Senior SWE (Java) - ZEOS — Stockholm",
+    "score": "2.5/5",
+    "status": "SKIP"
+  },
+  {
+    "id": "016",
+    "date": "2026-04-11",
+    "company": "JetBrains",
+    "role": "Senior SWE (IntelliJ AI) — Multi-EU",
+    "score": "3.5/5",
+    "status": "🎯 Aplicar"
+  },
+  {
+    "id": "017",
+    "date": "2026-04-11",
+    "company": "JetBrains",
+    "role": "Senior SWE (Live Debugger JVM) — Multi-EU",
+    "score": "3.0/5",
+    "status": "SKIP"
+  },
+  {
+    "id": "018",
+    "date": "2026-04-11",
+    "company": "JetBrains",
+    "role": "Senior SWE (IntelliJ Ultimate) — Multi-EU",
+    "score": "3.0/5",
+    "status": "SKIP"
+  },
+  {
+    "id": "019",
+    "date": "2026-04-11",
+    "company": "Klarna",
+    "role": "Senior SWE (Java) — Stockholm & Milan",
+    "score": "3.5/5",
+    "status": "🎯 Aplicar"
+  },
+  {
+    "id": "020",
+    "date": "2026-04-11",
+    "company": "Criteo",
+    "role": "Senior/Staff Backend SWE — Paris",
+    "score": "3.0/5",
+    "status": "SKIP"
+  },
+  {
+    "id": "021",
+    "date": "2026-04-11",
+    "company": "Booking.com",
+    "role": "Senior SWE (Java Backend) — Amsterdam",
+    "score": "4.0/5",
+    "status": "✅ Enviada"
+  },
+  {
+    "id": "022",
+    "date": "2026-04-12",
+    "company": "Binance",
+    "role": "Senior Backend Architect - Java",
+    "score": "4.0/5",
+    "status": "✅ Enviada"
+  },
+  {
+    "id": "023",
+    "date": "2026-04-12",
+    "company": "Match Group",
+    "role": "Senior Software Engineer (Remote)",
+    "score": "3.5/5",
+    "status": "✅ Enviada"
+  },
+  {
+    "id": "024",
+    "date": "2026-04-12",
+    "company": "Starbridge",
+    "role": "Senior Backend Software Engineer (Java/Kotlin)",
+    "score": "3.5/5",
+    "status": "✅ Enviada"
+  },
+  {
+    "id": "025",
+    "date": "2026-04-12",
+    "company": "Secfix",
+    "role": "Senior Product Engineer (Backend, Java) - Europe",
+    "score": "3.5/5",
+    "status": "✅ Enviada"
+  },
+  {
+    "id": "026",
+    "date": "2026-04-12",
+    "company": "EverAI",
+    "role": "Tech Lead, LLM & Generative AI",
+    "score": "4.0/5",
+    "status": "✅ Enviada"
+  },
+  {
+    "id": "027",
+    "date": "2026-04-12",
+    "company": "G2i Inc.",
+    "role": "Senior Software Engineer (AI / LLMs)",
+    "score": "3.5/5",
+    "status": "✅ Enviada"
+  },
+  {
+    "id": "028",
+    "date": "2026-04-12",
+    "company": "Julius AI",
+    "role": "Senior Software Engineer - Backend",
+    "score": "3.5/5",
+    "status": "✅ Enviada"
+  }
+]
