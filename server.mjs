@@ -34,6 +34,7 @@ import scannerRoutes from './lib/server/routes/scanner.mjs';
 import jobRoutes from './lib/server/routes/jobs.mjs';
 import diagnosticsRoutes from './lib/server/routes/diagnostics.mjs';
 import globalRoutes from './lib/server/routes/global.mjs';
+import autonomousRoutes from './lib/server/routes/autonomous.mjs';
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3001;
 const HOST = process.env.HOST || '0.0.0.0';
@@ -104,6 +105,7 @@ await fastify.register(scannerRoutes, { queue });
 await fastify.register(jobRoutes, { queue });
 await fastify.register(diagnosticsRoutes, { queue });
 await fastify.register(globalRoutes, { queue });
+await fastify.register(autonomousRoutes, { queue });
 
 // ═══════════════════════════════════════════════════════════════
 // Static file serving (legacy dashboard fallback)
