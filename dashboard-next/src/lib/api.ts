@@ -245,6 +245,100 @@ export async function fetchGlobalSchedule(): Promise<any> {
   } catch { return null; }
 }
 
+// ── Memory System API ────────────────────────────────────────
+
+export async function fetchMemorySnapshot(): Promise<any> {
+  try {
+    const res = await fetch(`${API}/api/memory`, { cache: 'no-store' });
+    if (!res.ok) return null;
+    return safeJson(res, null);
+  } catch { return null; }
+}
+
+export async function fetchMemoryLearnings(category?: string, query?: string): Promise<any[]> {
+  try {
+    const params = new URLSearchParams();
+    if (category) params.set('category', category);
+    if (query) params.set('query', query);
+    const res = await fetch(`${API}/api/memory/learnings?${params}`, { cache: 'no-store' });
+    if (!res.ok) return [];
+    return safeJson(res, []);
+  } catch { return []; }
+}
+
+export async function submitMemoryFeedback(data: {
+  company: string; role: string; url?: string; originalScore?: number;
+  userScore?: number; userRating?: number; userNotes?: string; actionTaken?: string;
+}): Promise<boolean> {
+  try {
+    const res = await fetch(`${API}/api/memory/feedback`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    return res.ok;
+  } catch { return false; }
+}
+
+export async function fetchCompanyIntel(company?: string, sortBy?: string): Promise<any[]> {
+  try {
+    const params = new URLSearchParams();
+    if (company) params.set('company', company);
+    if (sortBy) params.set('sortBy', sortBy);
+    const res = await fetch(`${API}/api/memory/companies?${params}`, { cache: 'no-store' });
+    if (!res.ok) return [];
+    return safeJson(res, []);
+  } catch { return []; }
+}
+
+export async function fetchCompanyStats(): Promise<any> {
+  try {
+    const res = await fetch(`${API}/api/memory/companies/stats`, { cache: 'no-store' });
+    if (!res.ok) return null;
+    return safeJson(res, null);
+  } catch { return null; }
+}
+
+export async function fetchMemoryPreferences(category?: string): Promise<any[]> {
+  try {
+    const params = new URLSearchParams();
+    if (category) params.set('category', category);
+    const res = await fetch(`${API}/api/memory/preferences?${params}`, { cache: 'no-store' });
+    if (!res.ok) return [];
+    return safeJson(res, []);
+  } catch { return []; }
+}
+
+export async function fetchPreferenceSummary(): Promise<any> {
+  try {
+    const res = await fetch(`${API}/api/memory/preferences/summary`, { cache: 'no-store' });
+    if (!res.ok) return null;
+    return safeJson(res, null);
+  } catch { return null; }
+}
+
+export async function fetchMemoryBriefing(): Promise<string> {
+  try {
+    const res = await fetch(`${API}/api/memory/briefing`, { cache: 'no-store' });
+    if (!res.ok) return '';
+    const data = await safeJson(res, { briefing: '' });
+    return data.briefing || '';
+  } catch { return ''; }
+}
+
+export async function learnFromEvaluation(data: {
+  company: string; role: string; score: number; url?: string; jdKeywords?: string[];
+}): Promise<boolean> {
+  try {
+    const res = await fetch(`${API}/api/memory/learn/evaluation`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    return res.ok;
+  } catch { return false; }
+}
+
 export async function fetchDashboardData(): Promise<DashboardData> {
   const results = await Promise.allSettled([
     fetchApplications(),

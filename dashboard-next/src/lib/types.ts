@@ -117,3 +117,74 @@ export interface ScanHistoryEntry {
   date?: string;
   source?: string;
 }
+
+// ── Memory System ──────────────────────────────────────────
+
+export interface MemoryLearning {
+  id: number;
+  category: string;
+  key: string;
+  value: any;
+  confidence: number;
+  source: string;
+  metadata: any;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface MemoryFeedback {
+  id: number;
+  company: string;
+  role: string;
+  url: string;
+  original_score: number;
+  user_score: number;
+  user_rating: number;
+  user_notes: string;
+  action_taken: string;
+  created_at: string;
+}
+
+export interface MemoryCompany {
+  company: string;
+  industry: string;
+  size_category: string;
+  total_jobs_seen: number;
+  total_applied: number;
+  total_responded: number;
+  total_interviewed: number;
+  total_offers: number;
+  total_rejected: number;
+  total_skipped: number;
+  avg_score: number;
+  avg_response_days: number | null;
+  last_interaction: string;
+  preferred_keywords: string[];
+  avoided_keywords: string[];
+  common_roles: string[];
+}
+
+export interface MemoryPreference {
+  category: string;
+  key: string;
+  signal: number;
+  count: number;
+  last_seen: string;
+}
+
+export interface MemoryPattern {
+  pattern_type: string;
+  pattern: string;
+  weight: number;
+  sample_size: number;
+  metadata: any;
+}
+
+export interface MemorySnapshot {
+  learnings: { total: number; byCategory: { category: string; count: number; avg_confidence: number }[] };
+  feedback: { total: number; avgUserScore: number; avgRating: number; byAction: { action_taken: string; count: number }[] };
+  companies: { total: number; totalApplied: number; totalResponded: number; totalInterviewed: number; totalOffers: number; totalRejected: number; avgResponseRate: number };
+  preferences: { categories: { category: string; count: number; total_signal: number }[]; topLikes: MemoryPreference[]; topDislikes: MemoryPreference[] };
+  patterns: { total: number; byType: { pattern_type: string; count: number; avg_weight: number }[] };
+  lastUpdated: string;
+}
