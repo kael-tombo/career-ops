@@ -36,6 +36,9 @@ output/tailored-*.html
 # Generated / binary
 *.exe
 *.bak
+data/career-ops.db
+data/career-ops.db-shm
+data/career-ops.db-wal
 test_output.txt
 
 # User-specific
