@@ -73,13 +73,42 @@ export interface DashboardData {
 
 export interface JobStatus {
   id: string;
-  type: 'scan' | 'evaluate' | 'tailor' | 'prep-form' | 'liveness-check';
+  type: 'scan' | 'evaluate' | 'tailor' | 'prep-form' | 'liveness-check' | 'global-sweep' | 'mass-scan' | 'mass-apply';
   state: 'queued' | 'running' | 'completed' | 'failed';
   payload: Record<string, unknown>;
   result?: string;
   error?: string;
   createdAt: string;
   completedAt?: string;
+}
+
+export interface GlobalCapabilities {
+  searchEngines: number;
+  searchEngineTLDs: number;
+  countries: number;
+  jobBoards: number;
+  proxyFingerprints: number;
+  maxRPM: number;
+  sitemapCrawlLimit: number;
+}
+
+export interface CountryData {
+  name: string;
+  tld: string;
+  lang: string;
+  engines: string[];
+  boardCount: number;
+  boards: string[];
+}
+
+export interface SweepStatus {
+  id: string;
+  status: string;
+  startedAt?: string;
+  completedAt?: string;
+  jobsFound?: number;
+  countriesCovered?: number;
+  error?: string;
 }
 
 export interface ScanHistoryEntry {

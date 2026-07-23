@@ -27,11 +27,7 @@ export default function RegionsPage() {
     setScanning(regionKey);
     setScanResult(null);
     const result = await submitScan(regionKey);
-    if (result.jobId) {
-      setScanResult('queued');
-    } else {
-      setScanResult('started');
-    }
+    setScanResult(result.jobId ? regionKey : `${regionKey}-failed`);
     setTimeout(() => {
       setScanning(null);
       setScanResult(null);
@@ -88,7 +84,9 @@ export default function RegionsPage() {
                 {scanning === key ? (
                   <><Loader2 size={12} className="animate-spin" /> Scanning...</>
                 ) : scanResult === key ? (
-                  <><CheckCircle2 size={12} className="text-[var(--color-green)]" /> Done</>
+                  <><CheckCircle2 size={12} className="text-[var(--color-green)]" /> Queued</>
+                ) : scanResult === `${key}-failed` ? (
+                  <><AlertCircle size={12} className="text-red-400" /> Failed</>
                 ) : (
                   <><Play size={12} /> Scan Now</>
                 )}

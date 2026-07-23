@@ -1,4 +1,4 @@
-import type { Application, PipelineItem, ReportMeta, Profile, PrepMeta, Diagnostics, DashboardData, JobStatus, ScanHistoryEntry } from './types';
+import type { Application, PipelineItem, ReportMeta, Profile, PrepMeta, Diagnostics, DashboardData, JobStatus, ScanHistoryEntry, GlobalCapabilities, CountryData, SweepStatus } from './types';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
@@ -8,6 +8,29 @@ async function safeJson<T>(res: Response, fallback: T): Promise<T> {
 
 async function safeText(res: Response, fallback: string): Promise<string> {
   try { return await res.text(); } catch { return fallback; }
+}
+
+export async function submitEvaluate(url: string): Promise<{ jobId: string }> {
+  try {
+    const res = await fetch(`${API}/api/evaluate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url }),
+    });
+    if (!res.ok) return { jobId: '' };
+    return safeJson(res, { jobId: '' });
+  } catch { return { jobId: '' }; }
+}
+
+export async function addToPipeline(url: string, company?: string, role?: string): Promise<boolean> {
+  try {
+    const res = await fetch(`${API}/api/pipeline`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url, company, role }),
+    });
+    return res.ok;
+  } catch { return false; }
 }
 
 export async function submitScan(region?: string): Promise<{ jobId: string }> {
@@ -25,7 +48,6 @@ export async function submitTailor(id: string): Promise<{ jobId: string }> {
   try {
     const res = await fetch(`${API}/api/tailor/${encodeURIComponent(id)}`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
     });
     if (!res.ok) return { jobId: '' };
     return safeJson(res, { jobId: '' });
@@ -36,7 +58,6 @@ export async function submitPrep(id: string): Promise<{ jobId: string }> {
   try {
     const res = await fetch(`${API}/api/prep-form/${encodeURIComponent(id)}`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
     });
     if (!res.ok) return { jobId: '' };
     return safeJson(res, { jobId: '' });
@@ -158,6 +179,70 @@ export async function updateStatus(id: string, status: string): Promise<boolean>
     });
     return res.ok;
   } catch { return false; }
+}
+
+export async function fetchGlobalCapabilities(): Promise<GlobalCapabilities | null> {
+  try {
+    const res = await fetch(`${API}/api/global/capabilities`, { cache: 'no-store' });
+    if (!res.ok) return null;
+    return safeJson(res, null);
+  } catch { return null; }
+}
+
+export async function fetchGlobalCountries(): Promise<{ total: number; countries: Record<string, CountryData> }> {
+  try {
+    const res = await fetch(`${API}/api/global/countries`, { cache: 'no-store' });
+    if (!res.ok) return { total: 0, countries: {} };
+    return safeJson(res, { total: 0, countries: {} });
+  } catch { return { total: 0, countries: {} }; }
+}
+
+export async function startGlobalSweep(queries: string[]): Promise<{ id: string; status: string }> {
+  try {
+    const res = await fetch(`${API}/api/global/sweep`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ queries }),
+    });
+    if (!res.ok) return { id: '', status: 'error' };
+    return safeJson(res, { id: '', status: 'error' });
+  } catch { return { id: '', status: 'error' }; }
+}
+
+export async function fetchGlobalSweepStatus(id: string): Promise<SweepStatus | null> {
+  try {
+    const res = await fetch(`${API}/api/global/sweep/${encodeURIComponent(id)}`, { cache: 'no-store' });
+    if (!res.ok) return null;
+    return safeJson(res, null);
+  } catch { return null; }
+}
+
+export async function fetchGlobalStats(): Promise<any> {
+  try {
+    const res = await fetch(`${API}/api/global/stats`, { cache: 'no-store' });
+    if (!res.ok) return null;
+    return safeJson(res, null);
+  } catch { return null; }
+}
+
+export async function setGlobalSchedule(intervalMinutes: number, type = 'scan'): Promise<any> {
+  try {
+    const res = await fetch(`${API}/api/global/schedule`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ intervalMinutes, type }),
+    });
+    if (!res.ok) return null;
+    return safeJson(res, null);
+  } catch { return null; }
+}
+
+export async function fetchGlobalSchedule(): Promise<any> {
+  try {
+    const res = await fetch(`${API}/api/global/schedule`, { cache: 'no-store' });
+    if (!res.ok) return null;
+    return safeJson(res, null);
+  } catch { return null; }
 }
 
 export async function fetchDashboardData(): Promise<DashboardData> {

@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { useDashboard } from '@/components/useDashboard';
-import { updateStatus, submitTailor, submitPrep } from '@/lib/api';
-import { Shield, ChevronDown, Search, Scissors, FileInput, Loader2, ExternalLink } from 'lucide-react';
+import { updateStatus, submitTailor, submitPrep, addToPipeline } from '@/lib/api';
+import { Shield, ChevronDown, Search, Scissors, FileInput, Loader2, ExternalLink, Plus, X } from 'lucide-react';
 
 const CANONICAL_STATUSES = ['Evaluated', 'Applied', 'Responded', 'Interview', 'Offer', 'Rejected', 'Discarded', 'SKIP'];
 
@@ -12,6 +12,11 @@ export default function TrackerPage() {
   const [search, setSearch] = useState('');
   const [updating, setUpdating] = useState<string | null>(null);
   const [actionJobs, setActionJobs] = useState<Record<string, { tailoring?: boolean; prepping?: boolean }>>({});
+  const [showAdd, setShowAdd] = useState(false);
+  const [newUrl, setNewUrl] = useState('');
+  const [newCo, setNewCo] = useState('');
+  const [newRole, setNewRole] = useState('');
+  const [adding, setAdding] = useState(false);
 
   if (loading || !data) return <div className="text-center py-20 text-[var(--color-text-muted)]">Loading tracker...</div>;
 
@@ -22,8 +27,9 @@ export default function TrackerPage() {
 
   const handleStatus = async (id: string, status: string) => {
     setUpdating(id);
-    await updateStatus(id, status);
+    const ok = await updateStatus(id, status);
     setUpdating(null);
+    if (!ok) alert(`Failed to update status for ${id}`);
     refresh();
   };
 
@@ -52,17 +58,73 @@ export default function TrackerPage() {
             Managing {data.applications.length} curated opportunities
           </p>
         </div>
-        <div className="relative">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]" />
-          <input
-            type="text"
-            placeholder="Search..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="pl-9 pr-4 py-2 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] text-sm text-white placeholder-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-primary)] w-64"
-          />
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setShowAdd(!showAdd)}
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[var(--color-primary)]/10 text-sm text-[var(--color-primary-light)] hover:bg-[var(--color-primary)]/20 transition-all"
+          >
+            {showAdd ? <X size={16} /> : <Plus size={16} />}
+            {showAdd ? 'Cancel' : 'Add Application'}
+          </button>
+          <div className="relative">
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]" />
+            <input
+              type="text"
+              placeholder="Search..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className="pl-9 pr-4 py-2 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] text-sm text-white placeholder-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-primary)] w-64"
+            />
+          </div>
         </div>
       </div>
+
+      {showAdd && (
+        <div className="glass rounded-xl p-5 space-y-3">
+          <input
+            type="url"
+            placeholder="Job posting URL *"
+            value={newUrl}
+            onChange={e => setNewUrl(e.target.value)}
+            className="w-full px-4 py-2 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] text-sm text-white focus:outline-none focus:border-[var(--color-primary)]"
+          />
+          <div className="flex gap-3">
+            <input
+              type="text"
+              placeholder="Company name"
+              value={newCo}
+              onChange={e => setNewCo(e.target.value)}
+              className="flex-1 px-4 py-2 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] text-sm text-white focus:outline-none focus:border-[var(--color-primary)]"
+            />
+            <input
+              type="text"
+              placeholder="Job title"
+              value={newRole}
+              onChange={e => setNewRole(e.target.value)}
+              className="flex-1 px-4 py-2 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] text-sm text-white focus:outline-none focus:border-[var(--color-primary)]"
+            />
+          </div>
+          <div className="flex justify-end">
+            <button
+              onClick={async () => {
+                if (!newUrl.trim()) return;
+                setAdding(true);
+                const ok = await addToPipeline(newUrl.trim(), newCo.trim() || undefined, newRole.trim() || undefined);
+                setAdding(false);
+                if (ok) {
+                  setNewUrl(''); setNewCo(''); setNewRole('');
+                  setShowAdd(false);
+                  refresh();
+                }
+              }}
+              disabled={adding || !newUrl.trim()}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-primary)] text-white hover:opacity-90 disabled:opacity-50 transition-all"
+            >
+              {adding ? <><Loader2 size={14} className="animate-spin" /> Adding...</> : 'Add to Pipeline'}
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="glass rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
@@ -74,6 +136,7 @@ export default function TrackerPage() {
                 <th className="text-left p-4 text-[var(--color-text-muted)] font-medium text-xs uppercase tracking-wider">Score</th>
                 <th className="text-left p-4 text-[var(--color-text-muted)] font-medium text-xs uppercase tracking-wider">Status</th>
                 <th className="text-left p-4 text-[var(--color-text-muted)] font-medium text-xs uppercase tracking-wider">Actions</th>
+                <th className="text-center p-4 text-[var(--color-text-muted)] font-medium text-xs uppercase tracking-wider">PDF</th>
                 <th className="text-left p-4 text-[var(--color-text-muted)] font-medium text-xs uppercase tracking-wider">Date</th>
                 <th className="text-left p-4 text-[var(--color-text-muted)] font-medium text-xs uppercase tracking-wider">Notes</th>
               </tr>
@@ -145,6 +208,7 @@ export default function TrackerPage() {
                         </button>
                       </div>
                     </td>
+                    <td className="p-4 text-center text-xs">{app.pdf === '✅' ? <span className="text-[var(--color-green)]">✅</span> : <span className="text-[var(--color-text-muted)]">❌</span>}</td>
                     <td className="p-4 text-[var(--color-text-muted)] text-xs">{app.date}</td>
                     <td className="p-4 text-xs text-[var(--color-text-muted)] max-w-xs truncate">{app.notes}</td>
                   </tr>

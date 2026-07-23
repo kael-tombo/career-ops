@@ -5,6 +5,7 @@ import { join } from 'path';
 import { chromium } from 'playwright';
 
 import {
+    setDb,
     loadPortalsConfig,
     loadRegions,
     getSeenUrls,
@@ -46,6 +47,16 @@ async function main() {
     }
 
     console.log('🚀 Career-Ops Universal Scanner\n');
+
+    // Wire up SQLite dual-write
+    try {
+        const { getDb } = await import('./lib/db/index.mjs');
+        getDb();
+        const { addPipelineItems, addScanHistory } = await import('./lib/db/index.mjs');
+        setDb({ addPipelineItems, addScanHistory });
+    } catch {
+        // SQLite not available — fall back to markdown-only
+    }
 
     const config = loadPortalsConfig();
     const regions = loadRegions();

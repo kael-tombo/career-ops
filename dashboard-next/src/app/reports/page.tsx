@@ -11,10 +11,17 @@ export default function ReportsPage() {
   const { data, loading } = useDashboard();
   const [selected, setSelected] = useState<string | null>(null);
   const [content, setContent] = useState('');
+  const [contentLoading, setContentLoading] = useState(false);
   const [search, setSearch] = useState('');
 
+  const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
   useEffect(() => {
-    if (selected) fetchReportContent(selected).then(setContent);
+    if (selected) {
+      setContentLoading(true);
+      setContent('');
+      fetchReportContent(selected).then(c => { setContent(c); setContentLoading(false); });
+    }
   }, [selected]);
 
   if (loading || !data) return <div className="text-center py-20 text-[var(--color-text-muted)]">Loading reports...</div>;
@@ -32,7 +39,7 @@ export default function ReportsPage() {
             <ArrowLeft size={16} /> Back to reports
           </button>
           <a
-            href={`http://localhost:3001/api/pdf/${encodeURIComponent(pdfFilename)}`}
+            href={`${API}/api/pdf/${encodeURIComponent(pdfFilename)}`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--color-primary)]/10 text-sm text-[var(--color-primary-light)] hover:bg-[var(--color-primary)]/20 transition-all"
@@ -42,9 +49,15 @@ export default function ReportsPage() {
         </div>
         <h1 className="text-2xl font-bold text-white">{selected}</h1>
         <div className="glass rounded-xl p-6 text-sm leading-relaxed prose prose-invert max-w-none">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>
-            {content}
-          </ReactMarkdown>
+          {contentLoading ? (
+            <div className="text-center py-8 text-[var(--color-text-muted)]">Loading report content...</div>
+          ) : content.startsWith('# Error') || content.startsWith('# Report not found') ? (
+            <div className="text-center py-8 text-red-400">{content.replace(/^#\s+/, '').trim()}</div>
+          ) : (
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {content}
+            </ReactMarkdown>
+          )}
         </div>
       </div>
     );

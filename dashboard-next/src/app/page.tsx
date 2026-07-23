@@ -1,13 +1,11 @@
 'use client';
 
-'use client';
-
 import { useState } from 'react';
 import { useDashboard } from '@/components/useDashboard';
 import StatCard from '@/components/StatCard';
 import OverviewCharts from '@/components/OverviewCharts';
 import RecentActivity from '@/components/RecentActivity';
-import { CheckCircle2, XCircle, ChevronDown, ChevronRight } from 'lucide-react';
+import { CheckCircle2, XCircle, ChevronUp, ChevronRight, User, Layers } from 'lucide-react';
 
 export default function OverviewPage() {
   const { data, loading } = useDashboard();
@@ -31,18 +29,24 @@ export default function OverviewPage() {
 
   const apps = data.applications;
   const total = apps.length;
-  const applied = apps.filter(a => (a.status || '').includes('Applied')).length;
-  const interviewed = apps.filter(a => (a.status || '').includes('Interview')).length;
-  const offers = apps.filter(a => (a.status || '').includes('Offer')).length;
-  const evaluated = apps.filter(a => (a.status || '').includes('Evaluated')).length;
+  const applied = apps.filter(a => a.status === 'Applied').length;
+  const interviewed = apps.filter(a => a.status === 'Interview').length;
+  const offers = apps.filter(a => a.status === 'Offer').length;
+  const evaluated = apps.filter(a => a.status === 'Evaluated').length;
+  const rejected = apps.filter(a => a.status === 'Rejected').length;
+  const responded = apps.filter(a => a.status === 'Responded').length;
   const elite = apps.filter(a => safeScore(a.score) >= 4).length;
+  const pdfCount = apps.filter(a => a.pdf === '✅').length;
   const avgScore = total > 0 ? (apps.reduce((s, a) => s + safeScore(a.score), 0) / total).toFixed(1) : '0.0';
   const conversionRate = evaluated > 0 ? Math.round((applied / evaluated) * 100) : 0;
 
   const diag = data.diagnostics;
+  const profile = data.profile;
 
   const storyContent = data.storyBank;
   const storySnippet = storyContent.replace(/^#\s+.*$/m, '').trim().slice(0, 200);
+
+  const pipelineCount = data.pipeline?.items?.length || 0;
 
   return (
     <div className="space-y-8">
@@ -51,14 +55,30 @@ export default function OverviewPage() {
         <p className="text-sm text-[var(--color-text-muted)] mt-1">
           Strategic overview of your active search &middot;{' '}
           <span className="text-[var(--color-green)]">{total} opportunities tracked</span>
+          {pipelineCount > 0 && <span className="ml-2 text-[var(--color-primary-light)]">{pipelineCount} pending in pipeline</span>}
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {profile && (
+        <div className="glass rounded-xl p-4 flex items-center gap-4">
+          <div className="w-10 h-10 rounded-full bg-[var(--color-primary)]/20 flex items-center justify-center">
+            <User size={20} className="text-[var(--color-primary-light)]" />
+          </div>
+          <div className="text-sm">
+            <span className="text-white font-medium">{profile.candidate?.full_name || 'Candidate'}</span>
+            {profile.target_roles?.primary && <span className="text-[var(--color-text-muted)] ml-2">{profile.target_roles.primary.join(', ')}</span>}
+            {profile.candidate?.location && <span className="text-[var(--color-text-muted)] ml-2">&middot; {profile.candidate.location}</span>}
+            {profile.compensation?.target_range && <span className="text-[var(--color-text-muted)] ml-2">&middot; {profile.compensation.target_range}</span>}
+          </div>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <StatCard title="Elite Matches" value={elite} subtitle="Score 4.0+" icon="rocket" />
         <StatCard title="Applications Sent" value={applied} subtitle={`${conversionRate}% conversion from eval`} icon="trending" />
         <StatCard title="Active Interviews" value={interviewed} subtitle={offers > 0 ? `${offers} offer${offers > 1 ? 's' : ''} received` : 'No offers yet'} icon="activity" />
         <StatCard title="Avg Score" value={avgScore} subtitle={`Across ${total} evaluations`} icon="file" />
+        <StatCard title="PDFs Generated" value={pdfCount} subtitle={`Of ${total} applications`} icon="rocket" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -76,8 +96,11 @@ export default function OverviewPage() {
           {[
             { label: 'Evaluated', value: evaluated, color: 'var(--color-blue)' },
             { label: 'Applied', value: applied, color: 'var(--color-green)' },
-            { label: 'Interviewing', value: interviewed, color: 'var(--color-lavender)' },
-            { label: 'SKIP / Discarded', value: apps.filter(a => a.status.includes('SKIP') || a.status.includes('Discarded')).length, color: 'var(--color-text-muted)' },
+            { label: 'Responded', value: responded, color: 'var(--color-lavender)' },
+            { label: 'Interviewing', value: interviewed, color: 'var(--color-purple)' },
+            { label: 'Offer', value: offers, color: 'var(--color-amber)' },
+            { label: 'Rejected', value: rejected, color: 'var(--color-red)' },
+            { label: 'SKIP / Discarded', value: apps.filter(a => a.status === 'SKIP' || a.status === 'Discarded').length, color: 'var(--color-text-muted)' },
           ].map((s) => (
             <div key={s.label} className="text-center p-3 rounded-lg bg-[var(--color-surface)]">
               <div className="text-2xl font-bold text-white" style={{ color: s.color }}>{s.value}</div>
@@ -92,7 +115,7 @@ export default function OverviewPage() {
           <h3 className="text-sm font-semibold text-white mb-4">System Health</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { label: 'Environment', ok: diag.env === 'OK' || diag.env !== undefined },
+              { label: 'Environment', ok: diag.env === 'OK' },
               { label: 'CV', ok: !!diag.cv },
               { label: 'Profile', ok: !!diag.profile },
               { label: 'Portals', ok: !!diag.portals },
@@ -121,7 +144,7 @@ export default function OverviewPage() {
               onClick={() => setStoryExpanded(!storyExpanded)}
               className="inline-flex items-center gap-1 mt-3 text-xs text-[var(--color-primary-light)] hover:underline"
             >
-              {storyExpanded ? <><ChevronDown size={12} /> Show less</> : <><ChevronRight size={12} /> Read more</>}
+              {storyExpanded ? <><ChevronUp size={12} /> Show less</> : <><ChevronRight size={12} /> Read more</>}
             </button>
           )}
         </div>

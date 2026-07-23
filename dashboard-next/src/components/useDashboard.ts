@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { fetchDashboardData, subscribeToEvents } from '@/lib/api';
 import type { DashboardData } from '@/lib/types';
 
-export function useDashboard(refreshInterval = 30000) {
+export function useDashboard(refreshInterval = 5000) {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());

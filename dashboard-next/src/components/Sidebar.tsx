@@ -1,13 +1,18 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Shield, Zap, FileText, Globe, BookOpen, Activity } from 'lucide-react';
+import { LayoutDashboard, Shield, Zap, FileText, Globe, BookOpen, Activity, Rocket, Compass } from 'lucide-react';
+
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 const navItems = [
   { href: '/', label: 'Overview', icon: LayoutDashboard },
   { href: '/tracker', label: 'Tracker', icon: Shield },
   { href: '/pipeline', label: 'Pipeline', icon: Zap },
+  { href: '/global', label: 'Global', icon: Compass },
+  { href: '/mass-apply', label: 'Mass Apply', icon: Rocket },
   { href: '/reports', label: 'Reports', icon: FileText },
   { href: '/regions', label: 'Regions', icon: Globe },
   { href: '/interview-prep', label: 'Interview Prep', icon: BookOpen },
@@ -15,6 +20,22 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const [trackerCount, setTrackerCount] = useState<number | null>(null);
+  const [version, setVersion] = useState('');
+
+  useEffect(() => {
+    fetch(`${API}/api/diagnostics`)
+      .then(r => r.json())
+      .then(d => {
+        if (d?.queue) setTrackerCount(d.queue.completed + d.queue.queued + d.queue.active);
+      })
+      .catch(() => {});
+    fetch(`${API}/api/applications`)
+      .then(r => r.json())
+      .then(a => setTrackerCount(Array.isArray(a) ? a.length : null))
+      .catch(() => {});
+    setVersion('3.0');
+  }, []);
 
   return (
     <aside className="w-56 lg:w-64 shrink-0 border-r border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col">
@@ -54,7 +75,7 @@ export default function Sidebar() {
       <div className="p-4 border-t border-[var(--color-border)]">
         <div className="flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
           <Activity size={14} />
-          <span>v1.8.1 · 26 trackers</span>
+          <span>v{version || '3.0'} · {trackerCount !== null ? `${trackerCount} trackers` : ''}</span>
         </div>
       </div>
     </aside>

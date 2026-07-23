@@ -11,9 +11,9 @@ export default function ScanAllButton() {
   const handleScan = async () => {
     setScanning(true);
     setDone(false);
-    await submitScan();
+    const result = await submitScan();
     setScanning(false);
-    setDone(true);
+    if (result.jobId) setDone(true);
     setTimeout(() => setDone(false), 3000);
   };
 

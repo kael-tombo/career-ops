@@ -13,7 +13,8 @@ export default function LiveIndicator() {
 
     const trySSE = () => {
       try {
-        es = new EventSource('http://localhost:3001/api/events');
+        const base = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+        es = new EventSource(`${base}/api/events`);
         es.onopen = () => {
           if (!cancelled) {
             setOnline(true);
@@ -36,7 +37,8 @@ export default function LiveIndicator() {
       if (cancelled) return;
       const check = async () => {
         try {
-          const res = await fetch('http://localhost:3001/api/diagnostics');
+          const base = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+          const res = await fetch(`${base}/api/diagnostics`);
           if (!cancelled) {
             setOnline(res.ok);
             setTime(new Date().toLocaleTimeString());

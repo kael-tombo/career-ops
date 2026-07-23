@@ -37,6 +37,14 @@ export default function OverviewCharts({ data }: { data: Application[] }) {
 
   const statusChart = Object.entries(statusCounts).map(([name, value]) => ({ name, value }));
 
+  if (data.length === 0) {
+    return (
+      <div className="text-center py-12 text-[var(--color-text-muted)]">
+        <p className="text-sm">No applications yet — paste a job URL to get started.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -72,7 +80,7 @@ export default function OverviewCharts({ data }: { data: Application[] }) {
                 outerRadius={80}
                 paddingAngle={3}
                 dataKey="value"
-                label
+                label={({ name, value }: { name?: string; value?: number }) => `${name || ''}: ${value || 0}`}
               >
                 {statusChart.map((_, i) => (
                   <Cell key={i} fill={SCORE_COLORS[i % SCORE_COLORS.length]} />

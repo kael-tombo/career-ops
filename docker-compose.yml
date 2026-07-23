@@ -8,24 +8,55 @@ services:
     environment:
       PORT: 3001
       HOST: 0.0.0.0
+      LOG_LEVEL: info
+      CORS_ORIGIN: "true"
+      RATE_LIMIT: 200
     volumes:
-      - ./data:/app/data
-      - ./reports:/app/reports
-      - ./output:/app/output
-      - ./interview-prep:/app/interview-prep
-      - ./jds:/app/jds
+      - career-data:/app/data
+      - career-reports:/app/reports
+      - career-output:/app/output
+      - career-interview-prep:/app/interview-prep
+      - career-jds:/app/jds
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3001/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
     restart: unless-stopped
+    networks:
+      - career-ops
 
   dashboard:
     build:
       context: .
       dockerfile: Dockerfile.dashboard
       args:
-        NEXT_PUBLIC_API_URL: http://api:3001
+        NEXT_PUBLIC_API_URL: http://localhost:3001
     ports:
       - "3000:3000"
     environment:
       PORT: 3000
     depends_on:
-      - api
+      api:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3000').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
     restart: unless-stopped
+    networks:
+      - career-ops
+
+volumes:
+  career-data:
+  career-reports:
+  career-output:
+  career-interview-prep:
+  career-jds:
+
+networks:
+  career-ops:
+    driver: bridge

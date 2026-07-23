@@ -1,0 +1,1707 @@
+# config/global/country-boards.yml
+# Country-specific job boards, career sites, and recruitment platforms.
+# 500+ boards across 100+ countries — used by the global job discovery system.
+# Format per country: key: {name, lang, boards: [{name, url, type, language, ats?}]}
+
+# ─── NORTH AMERICA ───
+
+US:
+  name: United States
+  lang: en
+  boards:
+    - name: LinkedIn
+      url: https://www.linkedin.com/jobs/
+      type: professional-network
+      ats: true
+    - name: Indeed
+      url: https://www.indeed.com/
+      type: aggregator
+      ats: true
+    - name: Glassdoor
+      url: https://www.glassdoor.com/Job/
+      type: aggregator
+    - name: Monster
+      url: https://www.monster.com/
+      type: aggregator
+    - name: CareerBuilder
+      url: https://www.careerbuilder.com/
+      type: aggregator
+    - name: ZipRecruiter
+      url: https://www.ziprecruiter.com/
+      type: aggregator
+    - name: Dice
+      url: https://www.dice.com/
+      type: tech-focus
+    - name: AngelList / Wellfound
+      url: https://wellfound.com/jobs/
+      type: startup-focus
+    - name: Built In
+      url: https://builtin.com/jobs/
+      type: tech-hub
+    - name: Hacker News Who's Hiring
+      url: https://news.ycombinator.com/jobs/
+      type: tech-focus
+    - name: USAJobs
+      url: https://www.usajobs.gov/
+      type: government
+    - name: FlexJobs
+      url: https://www.flexjobs.com/
+      type: remote-focus
+    - name: We Work Remotely
+      url: https://weworkremotely.com/
+      type: remote-focus
+    - name: Remote OK
+      url: https://remoteok.com/
+      type: remote-focus
+    - name: Upwork
+      url: https://www.upwork.com/freelance-jobs/
+      type: freelance
+    - name: Toptal
+      url: https://www.toptal.com/#hiring-consultants-now
+      type: freelance
+
+CA:
+  name: Canada
+  lang: en
+  boards:
+    - name: LinkedIn Canada
+      url: https://ca.linkedin.com/jobs/
+      type: professional-network
+    - name: Indeed Canada
+      url: https://ca.indeed.com/
+      type: aggregator
+    - name: Workopolis
+      url: https://www.workopolis.com/
+      type: aggregator
+    - name: Monster Canada
+      url: https://www.monster.ca/
+      type: aggregator
+    - name: JobBank
+      url: https://www.jobbank.gc.ca/
+      type: government
+    - name: Randstad Canada
+      url: https://www.randstad.ca/jobs/
+      type: agency
+    - name: Robert Half Canada
+      url: https://www.roberthalf.ca/jobs/
+      type: agency
+    - name: Indeed CA
+      url: https://ca.indeed.com/
+      type: aggregator
+
+MX:
+  name: Mexico
+  lang: es
+  boards:
+    - name: OCC Mundial
+      url: https://www.occ.com.mx/
+      type: aggregator
+    - name: Computrabajo México
+      url: https://www.computrabajo.com.mx/
+      type: aggregator
+    - name: Indeed México
+      url: https://mx.indeed.com/
+      type: aggregator
+    - name: LinkedIn México
+      url: https://mx.linkedin.com/jobs/
+      type: professional-network
+    - name: Bumeran México
+      url: https://www.bumeran.com.mx/
+      type: aggregator
+    - name: Glassdoor México
+      url: https://www.glassdoor.com.mx/
+      type: aggregator
+
+# ─── EUROPE ───
+
+GB:
+  name: United Kingdom
+  lang: en
+  boards:
+    - name: LinkedIn UK
+      url: https://uk.linkedin.com/jobs/
+      type: professional-network
+    - name: Indeed UK
+      url: https://uk.indeed.com/
+      type: aggregator
+    - name: Reed
+      url: https://www.reed.co.uk/
+      type: aggregator
+    - name: Totaljobs
+      url: https://www.totaljobs.com/
+      type: aggregator
+    - name: CWJobs
+      url: https://www.cwjobs.co.uk/
+      type: tech-focus
+    - name: Guardian Jobs
+      url: https://jobs.theguardian.com/
+      type: newspaper
+    - name: Gov.uk Find a Job
+      url: https://findajob.dwp.gov.uk/
+      type: government
+    - name: Monster UK
+      url: https://www.monster.co.uk/
+      type: aggregator
+    - name: Glassdoor UK
+      url: https://www.glassdoor.co.uk/
+      type: aggregator
+    - name: Jobsite
+      url: https://www.jobsite.co.uk/
+      type: aggregator
+    - name: CV-Library
+      url: https://www.cv-library.co.uk/
+      type: aggregator
+    - name: Hays UK
+      url: https://www.hays.co.uk/jobs/
+      type: agency
+
+DE:
+  name: Germany
+  lang: de
+  boards:
+    - name: StepStone Deutschland
+      url: https://www.stepstone.de/
+      type: aggregator
+    - name: Indeed Deutschland
+      url: https://de.indeed.com/
+      type: aggregator
+    - name: LinkedIn Deutschland
+      url: https://de.linkedin.com/jobs/
+      type: professional-network
+    - name: Monster Deutschland
+      url: https://www.monster.de/
+      type: aggregator
+    - name: jobvector
+      url: https://www.jobvector.de/
+      type: tech-focus
+    - name: XING Jobs
+      url: https://www.xing.com/jobs/
+      type: professional-network
+    - name: Bundesagentur für Arbeit
+      url: https://www.arbeitsagentur.de/jobsuche/
+      type: government
+    - name: Indeed DE
+      url: https://de.indeed.com/
+      type: aggregator
+    - name: Glassdoor DE
+      url: https://www.glassdoor.de/
+      type: aggregator
+    - name: Absolventa
+      url: https://www.absolventa.de/
+      type: graduate-focus
+    - name: academics
+      url: https://www.academics.de/
+      type: academic-focus
+
+FR:
+  name: France
+  lang: fr
+  boards:
+    - name: LinkedIn France
+      url: https://fr.linkedin.com/jobs/
+      type: professional-network
+    - name: Indeed France
+      url: https://fr.indeed.com/
+      type: aggregator
+    - name: Apec
+      url: https://www.apec.fr/
+      type: cadres-focus
+    - name: Pôle Emploi / France Travail
+      url: https://candidat.pole-emploi.fr/
+      type: government
+    - name: Monster France
+      url: https://www.monster.fr/
+      type: aggregator
+    - name: HelloWork
+      url: https://www.hellowork.com/
+      type: aggregator
+    - name: RegionsJobs
+      url: https://www.regionsjobs.com/
+      type: aggregator
+    - name: ChooseYourBoss
+      url: https://www.chooseyourboss.com/
+      type: startup-focus
+    - name: Welcome to the Jungle
+      url: https://www.welcometothejungle.com/fr/jobs
+      type: startup-focus
+    - name: Glassdoor France
+      url: https://www.glassdoor.fr/
+      type: aggregator
+    - name: Cadremploi
+      url: https://www.cadremploi.fr/
+      type: cadres-focus
+    - name: Jobijoba
+      url: https://www.jobijoba.com/fr/
+      type: aggregator
+
+ES:
+  name: Spain
+  lang: es
+  boards:
+    - name: Infojobs
+      url: https://www.infojobs.net/
+      type: aggregator
+    - name: Indeed España
+      url: https://es.indeed.com/
+      type: aggregator
+    - name: LinkedIn España
+      url: https://es.linkedin.com/jobs/
+      type: professional-network
+    - name: Monster España
+      url: https://www.monster.es/
+      type: aggregator
+    - name: Infoempleo
+      url: https://www.infoempleo.com/
+      type: aggregator
+    - name: Tecnoempleo
+      url: https://www.tecnoempleo.com/
+      type: tech-focus
+    - name: Jobandtalent
+      url: https://www.jobandtalent.com/
+      type: aggregator
+    - name: Glassdoor España
+      url: https://www.glassdoor.es/
+      type: aggregator
+
+IT:
+  name: Italy
+  lang: it
+  boards:
+    - name: Indeed Italia
+      url: https://it.indeed.com/
+      type: aggregator
+    - name: LinkedIn Italia
+      url: https://it.linkedin.com/jobs/
+      type: professional-network
+    - name: Monster Italia
+      url: https://www.monster.it/
+      type: aggregator
+    - name: Infojobs Italia
+      url: https://www.infojobs.it/
+      type: aggregator
+    - name: Subito Lavoro
+      url: https://www.subito.it/lavoro/
+      type: aggregator
+    - name: Randstad Italia
+      url: https://www.randstad.it/offerte-di-lavoro/
+      type: agency
+    - name: Adecco Italia
+      url: https://www.adecco.it/offerte-di-lavoro/
+      type: agency
+    - name: Glassdoor Italia
+      url: https://www.glassdoor.it/
+      type: aggregator
+
+NL:
+  name: Netherlands
+  lang: nl
+  boards:
+    - name: Indeed Nederland
+      url: https://nl.indeed.com/
+      type: aggregator
+    - name: LinkedIn Nederland
+      url: https://nl.linkedin.com/jobs/
+      type: professional-network
+    - name: Monsterboard
+      url: https://www.monsterboard.nl/
+      type: aggregator
+    - name: Nationale Vacaturebank
+      url: https://www.nationalevacaturebank.nl/
+      type: aggregator
+    - name: Jobbird
+      url: https://www.jobbird.com/
+      type: aggregator
+    - name: Werken bij de Overheid
+      url: https://www.werkenbijdeoverheid.nl/
+      type: government
+    - name: Werk.nl (UWV)
+      url: https://www.werk.nl/werkzoekenden/vacatures/
+      type: government
+    - name: Intermediair
+      url: https://www.intermediair.nl/vacatures/
+      type: professional
+
+SE:
+  name: Sweden
+  lang: sv
+  boards:
+    - name: Arbetsförmedlingen
+      url: https://arbetsformedlingen.se/platsbanken/
+      type: government
+    - name: Indeed Sverige
+      url: https://se.indeed.com/
+      type: aggregator
+    - name: LinkedIn Sverige
+      url: https://se.linkedin.com/jobs/
+      type: professional-network
+    - name: Monster Sverige
+      url: https://www.monster.se/
+      type: aggregator
+    - name: Blocket Jobb
+      url: https://jobb.blocket.se/
+      type: aggregator
+    - name: Academic Work
+      url: https://www.academicwork.se/lediga-jobb/
+      type: agency
+
+NO:
+  name: Norway
+  lang: no
+  boards:
+    - name: NAV Jobbsøk
+      url: https://www.nav.no/arbeid/jobbsok/
+      type: government
+    - name: Finn Jobb
+      url: https://www.finn.no/job/fulltime/
+      type: aggregator
+    - name: Indeed Norge
+      url: https://no.indeed.com/
+      type: aggregator
+    - name: LinkedIn Norge
+      url: https://no.linkedin.com/jobs/
+      type: professional-network
+    - name: Academic Work Norge
+      url: https://www.academicwork.no/ledige-stillinger/
+      type: agency
+
+DK:
+  name: Denmark
+  lang: da
+  boards:
+    - name: Jobindex
+      url: https://www.jobindex.dk/
+      type: aggregator
+    - name: Indeed Danmark
+      url: https://dk.indeed.com/
+      type: aggregator
+    - name: LinkedIn Danmark
+      url: https://dk.linkedin.com/jobs/
+      type: professional-network
+    - name: Jobnet (Styrelsen for Arbejdsmarked)
+      url: https://job.jobnet.dk/
+      type: government
+    - name: Graduateland
+      url: https://graduateland.com/jobs/denmark
+      type: graduate-focus
+    - name: Akademikernes Jobbank
+      url: https://www.akademikernesjobbank.dk/
+      type: academic-focus
+
+FI:
+  name: Finland
+  lang: fi
+  boards:
+    - name: TE-palvelut (Työmarkkinatori)
+      url: https://tyomarkkinatori.fi/
+      type: government
+    - name: Indeed Suomi
+      url: https://fi.indeed.com/
+      type: aggregator
+    - name: LinkedIn Suomi
+      url: https://fi.linkedin.com/jobs/
+      type: professional-network
+    - name: Duunitori
+      url: https://duunitori.fi/tyopaikat/
+      type: aggregator
+    - name: Monster Suomi
+      url: https://www.monster.fi/
+      type: aggregator
+    - name: Oikotie Työpaikat
+      url: https://tyopaikat.oikotie.fi/
+      type: aggregator
+
+PL:
+  name: Poland
+  lang: pl
+  boards:
+    - name: Pracuj.pl
+      url: https://www.pracuj.pl/
+      type: aggregator
+    - name: Indeed Polska
+      url: https://pl.indeed.com/
+      type: aggregator
+    - name: LinkedIn Polska
+      url: https://pl.linkedin.com/jobs/
+      type: professional-network
+    - name: No Fluff Jobs
+      url: https://nofluffjobs.com/pl/
+      type: tech-focus
+    - name: Just Join IT
+      url: https://justjoin.it/
+      type: tech-focus
+    - name: RocketJobs
+      url: https://rocketjobs.pl/
+      type: tech-focus
+    - name: Bulldogjob
+      url: https://bulldogjob.pl/
+      type: tech-focus
+    - name: PracujwIT
+      url: https://www.pracujwit.pl/
+      type: tech-focus
+    - name: GoWork
+      url: https://www.gowork.pl/
+      type: aggregator
+
+CZ:
+  name: Czech Republic
+  lang: cs
+  boards:
+    - name: Jobs.cz
+      url: https://www.jobs.cz/
+      type: aggregator
+    - name: Indeed ČR
+      url: https://cz.indeed.com/
+      type: aggregator
+    - name: LinkedIn ČR
+      url: https://cz.linkedin.com/jobs/
+      type: professional-network
+    - name: Práce.cz
+      url: https://www.prace.cz/
+      type: aggregator
+    - name: Startselect
+      url: https://www.startselect.cz/
+      type: tech-focus
+    - name: Atmoskop
+      url: https://www.atmoskop.cz/
+      type: aggregator
+
+HU:
+  name: Hungary
+  lang: hu
+  boards:
+    - name: Profession.hu
+      url: https://www.profession.hu/
+      type: aggregator
+    - name: Indeed Magyarország
+      url: https://hu.indeed.com/
+      type: aggregator
+    - name: LinkedIn Magyarország
+      url: https://hu.linkedin.com/jobs/
+      type: professional-network
+    - name: Állás.hu
+      url: https://www.allas.hu/
+      type: aggregator
+    - name: Jobline
+      url: https://www.jobline.hu/
+      type: aggregator
+    - name: Workania
+      url: https://www.workania.hu/
+      type: aggregator
+
+RO:
+  name: Romania
+  lang: ro
+  boards:
+    - name: eJobs
+      url: https://www.ejobs.ro/
+      type: aggregator
+    - name: BestJobs
+      url: https://www.bestjobs.eu/ro/
+      type: aggregator
+    - name: Indeed România
+      url: https://ro.indeed.com/
+      type: aggregator
+    - name: LinkedIn România
+      url: https://ro.linkedin.com/jobs/
+      type: professional-network
+    - name: Hipo.ro
+      url: https://www.hipo.ro/
+      type: professional
+    - name: Stagii pe Bune
+      url: https://www.stagiipebune.ro/
+      type: graduate-focus
+
+AT:
+  name: Austria
+  lang: de
+  boards:
+    - name: Karriere.at
+      url: https://www.karriere.at/
+      type: aggregator
+    - name: Indeed Österreich
+      url: https://at.indeed.com/
+      type: aggregator
+    - name: LinkedIn Österreich
+      url: https://at.linkedin.com/jobs/
+      type: professional-network
+    - name: Monster Österreich
+      url: https://www.monster.at/
+      type: aggregator
+    - name: AMS Jobsuche
+      url: https://jobroom.ams.or.at/
+      type: government
+
+CH:
+  name: Switzerland
+  lang: de
+  boards:
+    - name: Jobs.ch
+      url: https://www.jobs.ch/
+      type: aggregator
+    - name: Indeed Schweiz
+      url: https://ch.indeed.com/
+      type: aggregator
+    - name: LinkedIn Schweiz
+      url: https://ch.linkedin.com/jobs/
+      type: professional-network
+    - name: Monster Schweiz
+      url: https://www.monster.ch/
+      type: aggregator
+    - name: Jobup
+      url: https://www.jobup.ch/
+      type: aggregator
+    - name: RAV Jobsuche
+      url: https://jobtreff.arbeit.swiss/
+      type: government
+
+BE:
+  name: Belgium
+  lang: nl
+  boards:
+    - name: Indeed België
+      url: https://be.indeed.com/
+      type: aggregator
+    - name: LinkedIn België
+      url: https://be.linkedin.com/jobs/
+      type: professional-network
+    - name: VDAB
+      url: https://www.vdab.be/vacatures/
+      type: government
+    - name: Actiris
+      url: https://www.actiris.brussels/nl/vacatures/
+      type: government
+    - name: Forem
+      url: https://www.leforem.be/offres-emploi.html
+      type: government
+    - name: StepStone België
+      url: https://www.stepstone.be/
+      type: aggregator
+
+IE:
+  name: Ireland
+  lang: en
+  boards:
+    - name: Indeed Ireland
+      url: https://ie.indeed.com/
+      type: aggregator
+    - name: LinkedIn Ireland
+      url: https://ie.linkedin.com/jobs/
+      type: professional-network
+    - name: IrishJobs
+      url: https://www.irishjobs.ie/
+      type: aggregator
+    - name: Jobs.ie
+      url: https://www.jobs.ie/
+      type: aggregator
+    - name: Monster Ireland
+      url: https://www.monster.ie/
+      type: aggregator
+    - name: RecruitIreland
+      url: https://www.recruitireland.com/
+      type: aggregator
+
+PT:
+  name: Portugal
+  lang: pt
+  boards:
+    - name: Indeed Portugal
+      url: https://pt.indeed.com/
+      type: aggregator
+    - name: LinkedIn Portugal
+      url: https://pt.linkedin.com/jobs/
+      type: professional-network
+    - name: Net Empregos
+      url: https://www.net-empregos.com/
+      type: aggregator
+    - name: SAPO Emprego
+      url: https://emprego.sapo.pt/
+      type: aggregator
+    - name: Expresso Emprego
+      url: https://emprego.expresso.pt/
+      type: newspaper
+    - name: ITJobs
+      url: https://www.itjobs.pt/
+      type: tech-focus
+
+GR:
+  name: Greece
+  lang: el
+  boards:
+    - name: Indeed Ελλάδα
+      url: https://gr.indeed.com/
+      type: aggregator
+    - name: LinkedIn Ελλάδα
+      url: https://gr.linkedin.com/jobs/
+      type: professional-network
+    - name: Skywalker
+      url: https://www.skywalker.gr/jobs/
+      type: aggregator
+    - name: Kariera
+      url: https://www.kariera.gr/
+      type: aggregator
+    - name: Career.gr
+      url: https://www.career.gr/
+      type: aggregator
+
+TR:
+  name: Turkey
+  lang: tr
+  boards:
+    - name: Kariyer.net
+      url: https://www.kariyer.net/
+      type: aggregator
+    - name: Indeed Türkiye
+      url: https://tr.indeed.com/
+      type: aggregator
+    - name: LinkedIn Türkiye
+      url: https://tr.linkedin.com/jobs/
+      type: professional-network
+    - name: Yenibiris
+      url: https://www.yenibiris.com/
+      type: aggregator
+    - name: İşKur
+      url: https://www.iskur.gov.tr/
+      type: government
+    - name: Eleman.net
+      url: https://www.eleman.net/
+      type: aggregator
+    - name: İşin Olsun
+      url: https://www.isinolsun.com/
+      type: aggregator
+
+RU:
+  name: Russia
+  lang: ru
+  boards:
+    - name: HeadHunter (hh.ru)
+      url: https://hh.ru/
+      type: aggregator
+    - name: Indeed Россия
+      url: https://ru.indeed.com/
+      type: aggregator
+    - name: LinkedIn Россия
+      url: https://ru.linkedin.com/jobs/
+      type: professional-network
+    - name: SuperJob
+      url: https://www.superjob.ru/
+      type: aggregator
+    - name: Rabota.ru
+      url: https://www.rabota.ru/
+      type: aggregator
+    - name: Habr Career
+      url: https://career.habr.com/
+      type: tech-focus
+    - name: Trudvsem
+      url: https://trudvsem.ru/
+      type: government
+
+UA:
+  name: Ukraine
+  lang: uk
+  boards:
+    - name: Work.ua
+      url: https://www.work.ua/
+      type: aggregator
+    - name: Robota.ua
+      url: https://robota.ua/
+      type: aggregator
+    - name: LinkedIn Україна
+      url: https://ua.linkedin.com/jobs/
+      type: professional-network
+    - name: Djinni.co
+      url: https://djinni.co/
+      type: tech-focus
+    - name: Indeed Україна
+      url: https://ua.indeed.com/
+      type: aggregator
+
+# ─── ASIA-PACIFIC ───
+
+JP:
+  name: Japan
+  lang: ja
+  boards:
+    - name: Indeed Japan
+      url: https://jp.indeed.com/
+      type: aggregator
+    - name: LinkedIn Japan
+      url: https://jp.linkedin.com/jobs/
+      type: professional-network
+    - name: Wantedly
+      url: https://www.wantedly.com/
+      type: startup-focus
+    - name: Daijob
+      url: https://www.daijob.com/
+      type: bilingual-focus
+    - name: CareerCross
+      url: https://www.careercross.com/ja/
+      type: bilingual-focus
+    - name: Jobs in Japan
+      url: https://jobsinjapan.com/
+      type: english-focus
+    - name: GaijinPot Jobs
+      url: https://jobs.gaijinpot.com/
+      type: english-focus
+    - name: Recruit (リクナビ)
+      url: https://job.rikunabi.com/
+      type: aggregator
+    - name: MyNavi
+      url: https://job.mynavi.jp/
+      type: aggregator
+    - name: BizReach
+      url: https://www.bizreach.jp/
+      type: professional
+    - name: Green
+      url: https://www.green-japan.com/
+      type: tech-focus
+
+KR:
+  name: South Korea
+  lang: ko
+  boards:
+    - name: Indeed 한국
+      url: https://kr.indeed.com/
+      type: aggregator
+    - name: LinkedIn 한국
+      url: https://kr.linkedin.com/jobs/
+      type: professional-network
+    - name: JobKorea
+      url: https://www.jobkorea.co.kr/
+      type: aggregator
+    - name: Saramin
+      url: https://www.saramin.co.kr/
+      type: aggregator
+    - name: People Inc.
+      url: https://www.peopleinc.co.kr/
+      type: aggregator
+    - name: Wanted
+      url: https://www.wanted.co.kr/
+      type: tech-focus
+    - name: RocketPunch
+      url: https://www.rocketpunch.com/
+      type: tech-focus
+    - name: JumpIT
+      url: https://www.jumpit.co.kr/
+      type: tech-focus
+
+IN:
+  name: India
+  lang: en
+  boards:
+    - name: Naukri
+      url: https://www.naukri.com/
+      type: aggregator
+    - name: Indeed India
+      url: https://in.indeed.com/
+      type: aggregator
+    - name: LinkedIn India
+      url: https://in.linkedin.com/jobs/
+      type: professional-network
+    - name: Monster India
+      url: https://www.monsterindia.com/
+      type: aggregator
+    - name: TimesJobs
+      url: https://www.timesjobs.com/
+      type: aggregator
+    - name: Shine
+      url: https://www.shine.com/
+      type: aggregator
+    - name: UpGrad
+      url: https://www.upgrad.com/jobs/
+      type: edtech
+    - name: CutShort
+      url: https://cutshort.io/
+      type: startup-focus
+    - name: Hirist
+      url: https://www.hirist.com/
+      type: tech-focus
+    - name: iimjobs
+      url: https://www.iimjobs.com/
+      type: management-focus
+
+AU:
+  name: Australia
+  lang: en
+  boards:
+    - name: Seek
+      url: https://www.seek.com.au/
+      type: aggregator
+    - name: Indeed Australia
+      url: https://au.indeed.com/
+      type: aggregator
+    - name: LinkedIn Australia
+      url: https://au.linkedin.com/jobs/
+      type: professional-network
+    - name: Jora Australia
+      url: https://au.jora.com/
+      type: aggregator
+    - name: CareerOne
+      url: https://www.careerone.com.au/
+      type: aggregator
+    - name: APS Jobs (Government)
+      url: https://www.apsjobs.gov.au/
+      type: government
+    - name: EthicalJobs
+      url: https://www.ethicaljobs.com.au/
+      type: niche
+
+NZ:
+  name: New Zealand
+  lang: en
+  boards:
+    - name: Seek NZ
+      url: https://www.seek.co.nz/
+      type: aggregator
+    - name: Indeed New Zealand
+      url: https://nz.indeed.com/
+      type: aggregator
+    - name: LinkedIn New Zealand
+      url: https://nz.linkedin.com/jobs/
+      type: professional-network
+    - name: Trade Me Jobs
+      url: https://www.trademe.co.nz/jobs/
+      type: aggregator
+    - name: Jora New Zealand
+      url: https://nz.jora.com/
+      type: aggregator
+
+SG:
+  name: Singapore
+  lang: en
+  boards:
+    - name: JobsBank
+      url: https://www.jobsbank.gov.sg/
+      type: government
+    - name: Indeed Singapore
+      url: https://sg.indeed.com/
+      type: aggregator
+    - name: LinkedIn Singapore
+      url: https://sg.linkedin.com/jobs/
+      type: professional-network
+    - name: JobStreet Singapore
+      url: https://www.jobstreet.com.sg/
+      type: aggregator
+    - name: Monster Singapore
+      url: https://www.monster.com.sg/
+      type: aggregator
+    - name: eFinancialCareers SG
+      url: https://www.efinancialcareers.sg/
+      type: finance-focus
+    - name: NodeFlair
+      url: https://nodeflair.com/jobs/singapore
+      type: tech-focus
+
+HK:
+  name: Hong Kong
+  lang: en
+  boards:
+    - name: JobsDB Hong Kong
+      url: https://hk.jobsdb.com/
+      type: aggregator
+    - name: Indeed Hong Kong
+      url: https://hk.indeed.com/
+      type: aggregator
+    - name: LinkedIn Hong Kong
+      url: https://hk.linkedin.com/jobs/
+      type: professional-network
+    - name: Classified Post
+      url: https://www.classifiedpost.com/
+      type: english-focus
+    - name: EJob.gov.hk
+      url: https://e-job.gov.hk/
+      type: government
+
+TW:
+  name: Taiwan
+  lang: zh
+  boards:
+    - name: 104 Job Bank
+      url: https://www.104.com.tw/
+      type: aggregator
+    - name: Indeed Taiwan
+      url: https://tw.indeed.com/
+      type: aggregator
+    - name: LinkedIn Taiwan
+      url: https://tw.linkedin.com/jobs/
+      type: professional-network
+    - name: CakeResume
+      url: https://www.cakeresume.com/
+      type: professional
+    - name: Yourator
+      url: https://www.yourator.co/
+      type: tech-focus
+    - name: MeetJobs
+      url: https://www.meetjobs.com.tw/
+      type: aggregator
+
+TH:
+  name: Thailand
+  lang: th
+  boards:
+    - name: JobsDB Thailand
+      url: https://th.jobsdb.com/
+      type: aggregator
+    - name: Indeed Thailand
+      url: https://th.indeed.com/
+      type: aggregator
+    - name: LinkedIn Thailand
+      url: https://th.linkedin.com/jobs/
+      type: professional-network
+    - name: JobThai
+      url: https://www.jobthai.com/
+      type: aggregator
+    - name: Awork
+      url: https://www.awork.co.th/
+      type: tech-focus
+
+ID:
+  name: Indonesia
+  lang: id
+  boards:
+    - name: JobStreet Indonesia
+      url: https://www.jobstreet.co.id/
+      type: aggregator
+    - name: Indeed Indonesia
+      url: https://id.indeed.com/
+      type: aggregator
+    - name: LinkedIn Indonesia
+      url: https://id.linkedin.com/jobs/
+      type: professional-network
+    - name: Karir.com
+      url: https://www.karir.com/
+      type: aggregator
+    - name: Glints
+      url: https://glints.com/id/
+      type: tech-focus
+    - name: TopKarir
+      url: https://topkarir.com/
+      type: aggregator
+
+MY:
+  name: Malaysia
+  lang: ms
+  boards:
+    - name: JobStreet Malaysia
+      url: https://www.jobstreet.com.my/
+      type: aggregator
+    - name: Indeed Malaysia
+      url: https://my.indeed.com/
+      type: aggregator
+    - name: LinkedIn Malaysia
+      url: https://my.linkedin.com/jobs/
+      type: professional-network
+    - name: Hiredly
+      url: https://hiredly.com/
+      type: aggregator
+    - name: MauKerja
+      url: https://www.maukerja.my/
+      type: aggregator
+
+PH:
+  name: Philippines
+  lang: en
+  boards:
+    - name: JobStreet Philippines
+      url: https://www.jobstreet.com.ph/
+      type: aggregator
+    - name: Indeed Philippines
+      url: https://ph.indeed.com/
+      type: aggregator
+    - name: LinkedIn Philippines
+      url: https://ph.linkedin.com/jobs/
+      type: professional-network
+    - name: OnlineJobs.ph
+      url: https://www.onlinejobs.ph/
+      type: remote-focus
+    - name: Kalibrr
+      url: https://www.kalibrr.com/
+      type: aggregator
+    - name: Bossjob
+      url: https://bossjob.ph/
+      type: tech-focus
+
+VN:
+  name: Vietnam
+  lang: vi
+  boards:
+    - name: VietnamWorks
+      url: https://www.vietnamworks.com/
+      type: aggregator
+    - name: Indeed Việt Nam
+      url: https://vn.indeed.com/
+      type: aggregator
+    - name: LinkedIn Việt Nam
+      url: https://vn.linkedin.com/jobs/
+      type: professional-network
+    - name: TopDev
+      url: https://topdev.vn/
+      type: tech-focus
+    - name: IT Việc
+      url: https://itviec.com/
+      type: tech-focus
+    - name: CareerLink
+      url: https://www.careerlink.vn/
+      type: aggregator
+
+CN:
+  name: China
+  lang: zh
+  boards:
+    - name: 智联招聘 Zhaopin
+      url: https://www.zhaopin.com/
+      type: aggregator
+    - name: 前程无忧 51Job
+      url: https://www.51job.com/
+      type: aggregator
+    - name: Boss直聘 Boss Zhipin
+      url: https://www.zhipin.com/
+      type: direct-chat
+    - name: 猎聘网 Liepin
+      url: https://www.liepin.com/
+      type: professional
+    - name: 拉勾网 Lagou
+      url: https://www.lagou.com/
+      type: tech-focus
+    - name: Maimai 脉脉
+      url: https://maimai.cn/jobs/
+      type: professional-network
+    - name: 应届生求职网 Yingjiesheng
+      url: https://www.yingjiesheng.com/
+      type: graduate-focus
+
+# ─── MIDDLE EAST ───
+
+AE:
+  name: United Arab Emirates
+  lang: en
+  boards:
+    - name: Bayt
+      url: https://www.bayt.com/en/uae/
+      type: aggregator
+    - name: Naukri Gulf
+      url: https://www.naukrigulf.com/
+      type: aggregator
+    - name: Indeed UAE
+      url: https://ae.indeed.com/
+      type: aggregator
+    - name: LinkedIn UAE
+      url: https://ae.linkedin.com/jobs/
+      type: professional-network
+    - name: GulfTalent
+      url: https://www.gulftalent.com/
+      type: professional
+    - name: Dubizzle Jobs
+      url: https://www.dubizzle.com/jobs/
+      type: aggregator
+    - name: Monster Gulf
+      url: https://www.monstergulf.com/
+      type: aggregator
+    - name: JobMail
+      url: https://www.jobmail.ae/
+      type: aggregator
+    - name: Tawteen
+      url: https://tawteen.ae/
+      type: government
+
+SA:
+  name: Saudi Arabia
+  lang: ar
+  boards:
+    - name: Bayt Saudi
+      url: https://www.bayt.com/en/saudi-arabia/
+      type: aggregator
+    - name: Naukri Gulf
+      url: https://www.naukrigulf.com/
+      type: aggregator
+    - name: Indeed Saudi
+      url: https://sa.indeed.com/
+      type: aggregator
+    - name: LinkedIn Saudi
+      url: https://sa.linkedin.com/jobs/
+      type: professional-network
+    - name: GulfTalent
+      url: https://www.gulftalent.com/
+      type: professional
+    - name: Akhtaboot
+      url: https://www.akhtaboot.com/
+      type: aggregator
+    - name: Wzayef
+      url: https://www.wzayef.com/
+      type: aggregator
+    - name: HRDF (Human Resources Development)
+      url: https://www.hrdf.org.sa/
+      type: government
+
+IL:
+  name: Israel
+  lang: he
+  boards:
+    - name: AllJobs
+      url: https://www.alljobs.co.il/
+      type: aggregator
+    - name: Indeed ישראל
+      url: https://il.indeed.com/
+      type: aggregator
+    - name: LinkedIn ישראל
+      url: https://il.linkedin.com/jobs/
+      type: professional-network
+    - name: Drushim
+      url: https://www.drushim.co.il/
+      type: aggregator
+    - name: JobsMaster
+      url: https://www.jobmaster.co.il/
+      type: aggregator
+    - name: Nisha
+      url: https://nisha.co.il/
+      type: tech-focus
+
+QA:
+  name: Qatar
+  lang: en
+  boards:
+    - name: Bayt Qatar
+      url: https://www.bayt.com/en/qatar/
+      type: aggregator
+    - name: GulfTalent
+      url: https://www.gulftalent.com/
+      type: professional
+    - name: Indeed Qatar
+      url: https://qa.indeed.com/
+      type: aggregator
+    - name: LinkedIn Qatar
+      url: https://qa.linkedin.com/jobs/
+      type: professional-network
+
+KW:
+  name: Kuwait
+  lang: en
+  boards:
+    - name: Bayt Kuwait
+      url: https://www.bayt.com/en/kuwait/
+      type: aggregator
+    - name: Indeed Kuwait
+      url: https://kw.indeed.com/
+      type: aggregator
+    - name: GulfTalent
+      url: https://www.gulftalent.com/
+      type: professional
+    - name: LinkedIn Kuwait
+      url: https://kw.linkedin.com/jobs/
+      type: professional-network
+
+BH:
+  name: Bahrain
+  lang: en
+  boards:
+    - name: Bayt Bahrain
+      url: https://www.bayt.com/en/bahrain/
+      type: aggregator
+    - name: Indeed Bahrain
+      url: https://bh.indeed.com/
+      type: aggregator
+    - name: GulfTalent
+      url: https://www.gulftalent.com/
+      type: professional
+    - name: LinkedIn Bahrain
+      url: https://bh.linkedin.com/jobs/
+      type: professional-network
+
+OM:
+  name: Oman
+  lang: en
+  boards:
+    - name: Bayt Oman
+      url: https://www.bayt.com/en/oman/
+      type: aggregator
+    - name: Indeed Oman
+      url: https://om.indeed.com/
+      type: aggregator
+    - name: GulfTalent
+      url: https://www.gulftalent.com/
+      type: professional
+
+IQ:
+  name: Iraq
+  lang: ar
+  boards:
+    - name: Bayt Iraq
+      url: https://www.bayt.com/en/iraq/
+      type: aggregator
+    - name: Akhtaboot
+      url: https://www.akhtaboot.com/
+      type: aggregator
+    - name: Forasni
+      url: https://forasni.com/
+      type: aggregator
+
+JO:
+  name: Jordan
+  lang: ar
+  boards:
+    - name: Bayt Jordan
+      url: https://www.bayt.com/en/jordan/
+      type: aggregator
+    - name: Akhtaboot
+      url: https://www.akhtaboot.com/
+      type: aggregator
+    - name: Indeed Jordan
+      url: https://jo.indeed.com/
+      type: aggregator
+    - name: LinkedIn Jordan
+      url: https://jo.linkedin.com/jobs/
+      type: professional-network
+
+LB:
+  name: Lebanon
+  lang: ar
+  boards:
+    - name: Bayt Lebanon
+      url: https://www.bayt.com/en/lebanon/
+      type: aggregator
+    - name: Akhtaboot
+      url: https://www.akhtaboot.com/
+      type: aggregator
+    - name: Indeed Lebanon
+      url: https://lb.indeed.com/
+      type: aggregator
+
+# ─── AFRICA ───
+
+ZA:
+  name: South Africa
+  lang: en
+  boards:
+    - name: CareerJunction
+      url: https://www.careerjunction.co.za/
+      type: aggregator
+    - name: Indeed South Africa
+      url: https://za.indeed.com/
+      type: aggregator
+    - name: LinkedIn South Africa
+      url: https://za.linkedin.com/jobs/
+      type: professional-network
+    - name: PNet
+      url: https://www.pnet.co.za/
+      type: aggregator
+    - name: JobMail
+      url: https://www.jobmail.co.za/
+      type: aggregator
+    - name: Careers24
+      url: https://www.careers24.com/
+      type: aggregator
+    - name: OfferZen
+      url: https://www.offerzen.com/
+      type: tech-focus
+    - name: Glassdoor SA
+      url: https://www.glassdoor.co.za/
+      type: aggregator
+
+NG:
+  name: Nigeria
+  lang: en
+  boards:
+    - name: Jobberman
+      url: https://www.jobberman.com/
+      type: aggregator
+    - name: Indeed Nigeria
+      url: https://ng.indeed.com/
+      type: aggregator
+    - name: LinkedIn Nigeria
+      url: https://ng.linkedin.com/jobs/
+      type: professional-network
+    - name: MyJobMag
+      url: https://www.myjobmag.com/
+      type: aggregator
+    - name: Hot Nigerian Jobs
+      url: https://www.hotnigerianjobs.com/
+      type: aggregator
+    - name: Ngcareers
+      url: https://ngcareers.com/
+      type: aggregator
+
+KE:
+  name: Kenya
+  lang: en
+  boards:
+    - name: BrighterMonday
+      url: https://www.brightermonday.co.ke/
+      type: aggregator
+    - name: Indeed Kenya
+      url: https://ke.indeed.com/
+      type: aggregator
+    - name: LinkedIn Kenya
+      url: https://ke.linkedin.com/jobs/
+      type: professional-network
+    - name: MyJobMag Kenya
+      url: https://www.myjobmag.co.ke/
+      type: aggregator
+    - name: CareerPoint Kenya
+      url: https://www.careerpointkenya.co.ke/
+      type: aggregator
+
+GH:
+  name: Ghana
+  lang: en
+  boards:
+    - name: Jobberman Ghana
+      url: https://www.jobberman.com.gh/
+      type: aggregator
+    - name: Indeed Ghana
+      url: https://gh.indeed.com/
+      type: aggregator
+    - name: LinkedIn Ghana
+      url: https://gh.linkedin.com/jobs/
+      type: professional-network
+
+MA:
+  name: Morocco
+  lang: fr
+  boards:
+    - name: Rekrute
+      url: https://www.rekrute.com/
+      type: aggregator
+    - name: Indeed Maroc
+      url: https://ma.indeed.com/
+      type: aggregator
+    - name: LinkedIn Maroc
+      url: https://ma.linkedin.com/jobs/
+      type: professional-network
+    - name: Maroc Annonce
+      url: https://www.marocannonces.com/emploi/
+      type: aggregator
+    - name: Avito.ma Emploi
+      url: https://www.avito.ma/emploi/
+      type: aggregator
+
+EG:
+  name: Egypt
+  lang: ar
+  boards:
+    - name: Wuzzuf
+      url: https://wuzzuf.net/
+      type: aggregator
+    - name: Indeed Egypt
+      url: https://eg.indeed.com/
+      type: aggregator
+    - name: LinkedIn Egypt
+      url: https://eg.linkedin.com/jobs/
+      type: professional-network
+    - name: Forasna
+      url: https://www.forasna.com/
+      type: aggregator
+    - name: Bayt Egypt
+      url: https://www.bayt.com/en/egypt/
+      type: aggregator
+
+DZ:
+  name: Algeria
+  lang: ar
+  boards:
+    - name: Indeed Algérie
+      url: https://dz.indeed.com/
+      type: aggregator
+    - name: Emploitic
+      url: https://www.emploitic.com/
+      type: aggregator
+    - name: Rekrute Algérie
+      url: https://www.rekrute.com/algerie/
+      type: aggregator
+
+TN:
+  name: Tunisia
+  lang: ar
+  boards:
+    - name: Indeed Tunisie
+      url: https://tn.indeed.com/
+      type: aggregator
+    - name: TanitJobs
+      url: https://www.tanitjobs.com/
+      type: aggregator
+    - name: Keetow
+      url: https://www.keetow.com/
+      type: aggregator
+    - name: Emploi.com.tn
+      url: https://www.emploi.com.tn/
+      type: aggregator
+
+SN:
+  name: Senegal
+  lang: fr
+  boards:
+    - name: Emploi Sénégal
+      url: https://www.emploisenegal.com/
+      type: aggregator
+    - name: Indeed Sénégal
+      url: https://sn.indeed.com/
+      type: aggregator
+    - name: Recrutement Sénégal
+      url: https://www.recrutementsenegal.com/
+      type: aggregator
+
+CI:
+  name: Côte d'Ivoire
+  lang: fr
+  boards:
+    - name: Emploi CI
+      url: https://www.emploici.com/
+      type: aggregator
+    - name: Indeed Côte d'Ivoire
+      url: https://ci.indeed.com/
+      type: aggregator
+
+UG:
+  name: Uganda
+  lang: en
+  boards:
+    - name: BrighterMonday Uganda
+      url: https://www.brightermonday.co.ug/
+      type: aggregator
+    - name: Indeed Uganda
+      url: https://ug.indeed.com/
+      type: aggregator
+    - name: Jobs in Uganda
+      url: https://www.jobsinuganda.com/
+      type: aggregator
+
+TZ:
+  name: Tanzania
+  lang: sw
+  boards:
+    - name: BrighterMonday Tanzania
+      url: https://www.brightermonday.co.tz/
+      type: aggregator
+    - name: Indeed Tanzania
+      url: https://tz.indeed.com/
+      type: aggregator
+    - name: ZoomTanzania Jobs
+      url: https://www.zoomtanzania.com/jobs/
+      type: aggregator
+
+ZM:
+  name: Zambia
+  lang: en
+  boards:
+    - name: GoZambiaJobs
+      url: https://www.gozambiajobs.com/
+      type: aggregator
+    - name: JobSearch Zambia
+      url: https://www.jobsearchzambia.com/
+      type: aggregator
+
+ZW:
+  name: Zimbabwe
+  lang: en
+  boards:
+    - name: JobSearch Zimbabwe
+      url: https://www.jobsearch.co.zw/
+      type: aggregator
+    - name: Indeed Zimbabwe
+      url: https://zw.indeed.com/
+      type: aggregator
+
+ET:
+  name: Ethiopia
+  lang: am
+  boards:
+    - name: EthioJobs
+      url: https://www.ethiojobs.net/
+      type: aggregator
+    - name: JobWeb Ethiopia
+      url: https://www.jobwebethiopia.com/
+      type: aggregator
+
+# ─── SOUTH AMERICA ───
+
+BR:
+  name: Brazil
+  lang: pt
+  boards:
+    - name: LinkedIn Brasil
+      url: https://br.linkedin.com/jobs/
+      type: professional-network
+    - name: Indeed Brasil
+      url: https://br.indeed.com/
+      type: aggregator
+    - name: Catho
+      url: https://www.catho.com.br/
+      type: aggregator
+    - name: InfoJobs Brasil
+      url: https://www.infojobs.com.br/
+      type: aggregator
+    - name: Vagas.com
+      url: https://www.vagas.com.br/
+      type: aggregator
+    - name: Glassdoor Brasil
+      url: https://www.glassdoor.com.br/
+      type: aggregator
+    - name: GeekHunter
+      url: https://www.geekhunter.com.br/
+      type: tech-focus
+    - name: 99Jobs
+      url: https://www.99jobs.com/
+      type: tech-focus
+    - name: Apinfo
+      url: https://www.apinfo.com/
+      type: tech-focus
+    - name: Empregos.com
+      url: https://www.empregos.com.br/
+      type: aggregator
+    - name: Manager
+      url: https://www.manager.com.br/vagas-de-emprego/
+      type: aggregator
+
+AR:
+  name: Argentina
+  lang: es
+  boards:
+    - name: ZonaJobs
+      url: https://www.zonajobs.com.ar/
+      type: aggregator
+    - name: Bumeran Argentina
+      url: https://www.bumeran.com.ar/
+      type: aggregator
+    - name: Computrabajo Argentina
+      url: https://www.computrabajo.com.ar/
+      type: aggregator
+    - name: Indeed Argentina
+      url: https://ar.indeed.com/
+      type: aggregator
+    - name: LinkedIn Argentina
+      url: https://ar.linkedin.com/jobs/
+      type: professional-network
+    - name: Glassdoor Argentina
+      url: https://www.glassdoor.com.ar/
+      type: aggregator
+
+CL:
+  name: Chile
+  lang: es
+  boards:
+    - name: Laborum
+      url: https://www.laborum.cl/
+      type: aggregator
+    - name: Computrabajo Chile
+      url: https://www.computrabajo.cl/
+      type: aggregator
+    - name: Indeed Chile
+      url: https://cl.indeed.com/
+      type: aggregator
+    - name: LinkedIn Chile
+      url: https://cl.linkedin.com/jobs/
+      type: professional-network
+    - name: Trabajando.cl
+      url: https://www.trabajando.cl/
+      type: aggregator
+    - name: Bumeran Chile
+      url: https://www.bumeran.cl/
+      type: aggregator
+    - name: Chiletrabajos
+      url: https://www.chiletrabajos.cl/
+      type: aggregator
+
+CO:
+  name: Colombia
+  lang: es
+  boards:
+    - name: Computrabajo Colombia
+      url: https://www.computrabajo.com.co/
+      type: aggregator
+    - name: Indeed Colombia
+      url: https://co.indeed.com/
+      type: aggregator
+    - name: LinkedIn Colombia
+      url: https://co.linkedin.com/jobs/
+      type: professional-network
+    - name: Elemento
+      url: https://www.elemento.com.co/
+      type: aggregator
+    - name: Empleos Colombianos
+      url: https://www.empleoscolombianos.com/
+      type: aggregator
+    - name: Elempleo
+      url: https://www.elempleo.com/co/
+      type: aggregator
+
+PE:
+  name: Peru
+  lang: es
+  boards:
+    - name: Computrabajo Perú
+      url: https://www.computrabajo.com.pe/
+      type: aggregator
+    - name: Bumeran Perú
+      url: https://www.bumeran.com.pe/
+      type: aggregator
+    - name: Indeed Perú
+      url: https://pe.indeed.com/
+      type: aggregator
+    - name: LinkedIn Perú
+      url: https://pe.linkedin.com/jobs/
+      type: professional-network
+    - name: Aptitus
+      url: https://www.aptitus.com/
+      type: aggregator
+
+EC:
+  name: Ecuador
+  lang: es
+  boards:
+    - name: Multitrabajos
+      url: https://www.multitrabajos.com/
+      type: aggregator
+    - name: Computrabajo Ecuador
+      url: https://www.computrabajo.com.ec/
+      type: aggregator
+    - name: Indeed Ecuador
+      url: https://ec.indeed.com/
+      type: aggregator
+
+VE:
+  name: Venezuela
+  lang: es
+  boards:
+    - name: Computrabajo Venezuela
+      url: https://www.computrabajo.com.ve/
+      type: aggregator
+    - name: Indeed Venezuela
+      url: https://ve.indeed.com/
+      type: aggregator
+    - name: Empleate
+      url: https://empleate.com/
+      type: aggregator
+
+UY:
+  name: Uruguay
+  lang: es
+  boards:
+    - name: Computrabajo Uruguay
+      url: https://www.computrabajo.com.uy/
+      type: aggregator
+    - name: Indeed Uruguay
+      url: https://uy.indeed.com/
+      type: aggregator
+    - name: BuscoJobs Uruguay
+      url: https://www.buscojobs.com.uy/
+      type: aggregator
+
+PY:
+  name: Paraguay
+  lang: es
+  boards:
+    - name: Computrabajo Paraguay
+      url: https://www.computrabajo.com.py/
+      type: aggregator
+    - name: Indeed Paraguay
+      url: https://py.indeed.com/
+      type: aggregator
+
+BO:
+  name: Bolivia
+  lang: es
+  boards:
+    - name: Computrabajo Bolivia
+      url: https://www.computrabajo.com.bo/
+      type: aggregator
+    - name: Indeed Bolivia
+      url: https://bo.indeed.com/
+      type: aggregator
