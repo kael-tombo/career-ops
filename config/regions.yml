@@ -3,9 +3,27 @@
 # Used by scan-portals.mjs --region and search-region.mjs
 
 regions:
+  # ─── UAE (shortcut for UAE-only search) ───
+  uae:
+    label: "UAE"
+    country_codes: ["AE"]
+    countries:
+      - "UAE"
+      - "Dubai"
+      - "Abu Dhabi"
+      - "Sharjah"
+    keywords: "UAE OR Dubai OR Abu Dhabi"
+    job_sites:
+      - "linkedin.com/jobs"
+      - "bayt.com"
+      - "naukrigulf.com"
+      - "gulftalent.com"
+      - "indeed.ae"
+
   # ─── Middle East & North Africa ───
   middle-east:
     label: "Middle East & North Africa"
+    country_codes: ["AE", "SA", "QA", "KW", "BH", "OM", "IL", "EG", "JO", "LB", "IQ", "MA", "DZ", "TN"]
     countries:
       - "UAE"
       - "Dubai"
@@ -42,6 +60,7 @@ regions:
   # ─── Europe ───
   europe:
     label: "Europe (including UK & Remote EU)"
+    country_codes: ["GB", "DE", "FR", "IT", "ES", "NL", "BE", "CH", "AT", "SE", "NO", "DK", "FI", "PL", "CZ", "SK", "HU", "RO", "BG", "HR", "RS", "SI", "LT", "LV", "EE", "IE", "PT", "GR", "LU", "MT", "CY", "IS"]
     countries:
       - "United Kingdom"
       - "London"
@@ -98,9 +117,116 @@ regions:
       - "monster.de"
       - "welcometothejungle.com"
 
+  # ─── North America ───
+  north-america:
+    label: "North America"
+    country_codes: ["US", "CA", "MX"]
+    countries:
+      - "United States"
+      - "US"
+      - "USA"
+      - "New York"
+      - "San Francisco"
+      - "Remote US"
+      - "Canada"
+      - "Toronto"
+      - "Vancouver"
+      - "Montreal"
+      - "Mexico"
+      - "Mexico City"
+    keywords: "US OR USA OR Canada OR Mexico OR Remote US OR Remote Canada"
+    job_sites:
+      - "linkedin.com/jobs"
+      - "indeed.com"
+      - "glassdoor.com"
+      - "monster.com"
+
+  # ─── South America ───
+  south-america:
+    label: "South America"
+    country_codes: ["BR", "AR", "CL", "CO", "PE", "EC", "VE", "UY", "PY", "BO"]
+    countries:
+      - "Brazil"
+      - "São Paulo"
+      - "Rio de Janeiro"
+      - "Argentina"
+      - "Buenos Aires"
+      - "Colombia"
+      - "Bogota"
+      - "Chile"
+      - "Santiago"
+      - "Peru"
+      - "Lima"
+      - "LATAM"
+      - "Remote LATAM"
+    keywords: "Brazil OR Argentina OR Colombia OR Chile OR Peru OR LATAM OR Remote LATAM"
+    job_sites:
+      - "linkedin.com/jobs"
+      - "indeed.com"
+      - "glassdoor.com"
+
+  # ─── Latin America (superset: Mexico + South America) ───
+  latin-america:
+    label: "Latin America (incl. Mexico)"
+    country_codes: ["MX", "BR", "AR", "CL", "CO", "PE", "EC", "VE", "UY", "PY", "BO", "CR", "PA", "GT", "SV", "HN", "NI", "DO", "PR"]
+    countries:
+      - "Mexico"
+      - "Mexico City"
+      - "Brazil"
+      - "São Paulo"
+      - "Rio de Janeiro"
+      - "Argentina"
+      - "Buenos Aires"
+      - "Colombia"
+      - "Bogota"
+      - "Chile"
+      - "Santiago"
+      - "LATAM"
+      - "Remote LATAM"
+    keywords: "LATAM OR Remote LATAM OR Brazil OR Mexico OR Argentina OR Colombia OR Chile"
+    job_sites:
+      - "linkedin.com/jobs"
+      - "indeed.com"
+      - "glassdoor.com"
+
+  # ─── Americas (superset + backward compat) ───
+  americas:
+    label: "All Americas (North + South + Latin)"
+    country_codes: ["US", "CA", "MX", "BR", "AR", "CL", "CO", "PE", "EC", "VE", "UY", "PY", "BO", "CR", "PA", "GT", "SV", "HN", "NI", "DO", "PR", "JM", "TT"]
+    countries:
+      - "United States"
+      - "US"
+      - "USA"
+      - "New York"
+      - "San Francisco"
+      - "Remote US"
+      - "Canada"
+      - "Toronto"
+      - "Vancouver"
+      - "Brazil"
+      - "São Paulo"
+      - "Rio de Janeiro"
+      - "Mexico"
+      - "Mexico City"
+      - "Argentina"
+      - "Buenos Aires"
+      - "Colombia"
+      - "Bogota"
+      - "Chile"
+      - "Santiago"
+      - "LATAM"
+      - "Remote LATAM"
+    keywords: "US OR Canada OR Brazil OR Mexico OR LATAM OR Remote US OR Remote Canada OR Remote LATAM"
+    job_sites:
+      - "linkedin.com/jobs"
+      - "indeed.com"
+      - "glassdoor.com"
+      - "monster.com"
+
   # ─── Asia ───
   asia:
     label: "Asia & Asia-Pacific"
+    country_codes: ["JP", "KR", "IN", "AU", "NZ", "SG", "HK", "TW", "TH", "ID", "MY", "PH", "VN", "CN", "PK", "BD", "LK", "NP"]
     countries:
       - "Singapore"
       - "Japan"
@@ -145,6 +271,7 @@ regions:
   # ─── Africa ───
   africa:
     label: "Africa"
+    country_codes: ["ZA", "NG", "KE", "GH", "MA", "DZ", "TN", "EG", "SN", "CI", "UG", "TZ", "ZM", "ZW", "MU", "NA", "ET"]
     countries:
       - "South Africa"
       - "Cape Town"
@@ -174,42 +301,10 @@ regions:
       - "indeed.co.za"
       - "glassdoor.com"
 
-  # ─── Americas ───
-  americas:
-    label: "North & South America"
-    countries:
-      - "United States"
-      - "US"
-      - "USA"
-      - "New York"
-      - "San Francisco"
-      - "Remote US"
-      - "Canada"
-      - "Toronto"
-      - "Vancouver"
-      - "Brazil"
-      - "São Paulo"
-      - "Rio de Janeiro"
-      - "Mexico"
-      - "Mexico City"
-      - "Argentina"
-      - "Buenos Aires"
-      - "Colombia"
-      - "Bogota"
-      - "Chile"
-      - "Santiago"
-      - "LATAM"
-      - "Remote LATAM"
-    keywords: "US OR Canada OR Brazil OR Mexico OR LATAM OR Remote US OR Remote Canada OR Remote LATAM"
-    job_sites:
-      - "linkedin.com/jobs"
-      - "indeed.com"
-      - "glassdoor.com"
-      - "monster.com"
-
   # ─── Remote / Global ───
   global:
     label: "Global / Remote — Anywhere"
+    country_codes: []
     countries:
       - "Remote"
       - "Worldwide"

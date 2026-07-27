@@ -1,0 +1,94 @@
+{
+  "name": "Career-Ops Notify",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "career-ops-notify",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.2,
+      "position": [0, 300],
+      "id": "webhook-trigger",
+      "name": "Webhook"
+    },
+    {
+      "parameters": {
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [250, 100],
+      "id": "prepare-discord",
+      "name": "Prepare Discord"
+    },
+    {
+      "parameters": {
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [250, 500],
+      "id": "prepare-slack",
+      "name": "Prepare Slack"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "create",
+        "channelId": "",
+        "text": "=🚀 *Career-Ops Alert*\nType: {{ $json.type }}\nCompany: {{ $json.company }}\nRole: {{ $json.role }}\nScore: {{ $json.score }}\nURL: {{ $json.url }}"
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2,
+      "position": [500, 500],
+      "id": "slack-send",
+      "name": "Slack"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "content": "**🚀 Career-Ops Alert**\n**Type:** {{ $json.type }}\n**Company:** {{ $json.company }}\n**Role:** {{ $json.role }}\n**Score:** {{ $json.score }}\n**URL:** {{ $json.url }}"
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [500, 100],
+      "id": "discord-send",
+      "name": "Discord"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          { "node": "Prepare Discord", "type": "main", "index": 0 },
+          { "node": "Prepare Slack", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Prepare Discord": {
+      "main": [
+        [{ "node": "Discord", "type": "main", "index": 0 }]
+      ]
+    },
+    "Prepare Slack": {
+      "main": [
+        [{ "node": "Slack", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "pinData": {},
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "id": "career-ops-notify",
+  "tags": []
+}

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Shield, Zap, FileText, Globe, BookOpen, Activity, Rocket, Compass, Bot, Brain, BarChart3 } from 'lucide-react';
+import { LayoutDashboard, Shield, Zap, FileText, Globe, BookOpen, Activity, Rocket, Compass, Bot, Brain, BarChart3, Cpu, Server } from 'lucide-react';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
@@ -12,6 +12,8 @@ const navItems = [
   { href: '/autonomous', label: 'AI Team', icon: Bot },
   { href: '/memory', label: 'Memory', icon: Brain },
   { href: '/analytics', label: 'Analytics', icon: BarChart3 },
+  { href: '/ai', label: 'AI Modules', icon: Cpu },
+  { href: '/providers', label: 'LLM Providers', icon: Server },
   { href: '/tracker', label: 'Tracker', icon: Shield },
   { href: '/pipeline', label: 'Pipeline', icon: Zap },
   { href: '/global', label: 'Global', icon: Compass },

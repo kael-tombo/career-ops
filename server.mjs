@@ -36,6 +36,7 @@ import diagnosticsRoutes from './lib/server/routes/diagnostics.mjs';
 import globalRoutes from './lib/server/routes/global.mjs';
 import autonomousRoutes from './lib/server/routes/autonomous.mjs';
 import memoryRoutes from './lib/server/routes/memory.mjs';
+import aiRoutes from './lib/server/routes/ai.mjs';
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3001;
 const HOST = process.env.HOST || '0.0.0.0';
@@ -80,8 +81,17 @@ const fastify = Fastify({
 // ═══════════════════════════════════════════════════════════════
 
 // CORS
+const corsOrigin = process.env.CORS_ORIGIN;
+let origin;
+if (!corsOrigin || corsOrigin === 'true') {
+  origin = true;
+} else if (corsOrigin === '*') {
+  origin = '*';
+} else {
+  origin = corsOrigin.split(',').map(s => s.trim());
+}
 await fastify.register(cors, {
-  origin: process.env.CORS_ORIGIN || true, // true = reflect origin
+  origin,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 });
@@ -108,6 +118,7 @@ await fastify.register(diagnosticsRoutes, { queue });
 await fastify.register(globalRoutes, { queue });
 await fastify.register(autonomousRoutes, { queue });
 await fastify.register(memoryRoutes);
+await fastify.register(aiRoutes);
 
 // ═══════════════════════════════════════════════════════════════
 // Static file serving (legacy dashboard fallback)

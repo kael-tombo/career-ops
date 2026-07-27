@@ -49,3 +49,18 @@ test_output.txt
 .claude/memory/
 career-dashboard
 package-lock.json
+
+# Secrets / environment
+.env
+.env.docker
+
+# Playwright cache
+.playwright-cache/
+
+# Runtime state
+data/daemon-state.json
+data/daemon.log
+data/daemon.pid
+
+# Generated AI modules
+lib/ai/

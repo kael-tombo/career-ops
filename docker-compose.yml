@@ -1,4 +1,5 @@
 services:
+  # ─── API Server (Fastify) ──────────────────────────────────
   api:
     build:
       context: .
@@ -9,34 +10,105 @@ services:
       PORT: 3001
       HOST: 0.0.0.0
       LOG_LEVEL: info
-      CORS_ORIGIN: "true"
+      CORS_ORIGIN: "*"
       RATE_LIMIT: 200
+      NODE_ENV: production
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_API_KEYS: ${GEMINI_API_KEYS:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      XAI_API_KEY: ${XAI_API_KEY:-}
+      KIMI_API_KEY: ${KIMI_API_KEY:-}
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+      LLM_PROVIDER_ORDER: ${LLM_PROVIDER_ORDER:-openai,grok,kimi,deepseek,gemini}
+    env_file:
+      - path: .env.docker
+        required: false
     volumes:
-      - career-data:/app/data
-      - career-reports:/app/reports
-      - career-output:/app/output
-      - career-interview-prep:/app/interview-prep
-      - career-jds:/app/jds
+      - ./data:/app/data
+      - ./reports:/app/reports
+      - ./output:/app/output
+      - ./interview-prep:/app/interview-prep
+      - ./jds:/app/jds
+      - ./logs:/app/logs
+      - ./config:/app/config
+      - ./modes:/app/modes
+      - ./resumes:/app/resumes
+      - ./cv.md:/app/cv.md
+      - ./portals.yml:/app/portals.yml
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://localhost:3001/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
       interval: 30s
       timeout: 5s
-      start_period: 10s
+      start_period: 15s
       retries: 3
     restart: unless-stopped
     networks:
       - career-ops
 
+  # ─── Autonomous Daemon (24/7 Pipeline) ─────────────────────
+  daemon:
+    build:
+      context: .
+      dockerfile: Dockerfile.daemon
+    ports:
+      - "4173:4173"
+    environment:
+      DAEMON_PORT: 4173
+      NODE_ENV: production
+      SAFE_MODE: ${SAFE_MODE:-true}
+      PIPELINE_INTERVAL: ${PIPELINE_INTERVAL:-3600}
+      SCAN_INTERVAL: ${SCAN_INTERVAL:-180}
+      MAX_APPLY_PER_RUN: ${MAX_APPLY_PER_RUN:-10}
+      MIN_SCORE: ${MIN_SCORE:-3.5}
+      PIPELINE_WORKERS: ${PIPELINE_WORKERS:-3}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_API_KEYS: ${GEMINI_API_KEYS:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      XAI_API_KEY: ${XAI_API_KEY:-}
+      KIMI_API_KEY: ${KIMI_API_KEY:-}
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+      LLM_PROVIDER_ORDER: ${LLM_PROVIDER_ORDER:-openai,grok,kimi,deepseek,gemini}
+    env_file:
+      - path: .env.docker
+        required: false
+    volumes:
+      - ./data:/app/data
+      - ./reports:/app/reports
+      - ./output:/app/output
+      - ./interview-prep:/app/interview-prep
+      - ./jds:/app/jds
+      - ./logs:/app/logs
+      - ./config:/app/config
+      - ./modes:/app/modes
+      - ./resumes:/app/resumes
+      - ./cv.md:/app/cv.md
+      - ./portals.yml:/app/portals.yml
+    depends_on:
+      api:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:4173/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
+    restart: unless-stopped
+    networks:
+      - career-ops
+
+  # ─── Next.js Dashboard ─────────────────────────────────────
   dashboard:
     build:
       context: .
       dockerfile: Dockerfile.dashboard
       args:
-        NEXT_PUBLIC_API_URL: http://localhost:3001
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3001}
     ports:
       - "3000:3000"
     environment:
       PORT: 3000
+      HOSTNAME: 0.0.0.0
+      NODE_ENV: production
     depends_on:
       api:
         condition: service_started
@@ -50,12 +122,31 @@ services:
     networks:
       - career-ops
 
+  # ─── n8n Workflow Automation ─────────────────────────────────
+  n8n:
+    image: n8nio/n8n
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - N8N_SECURE_COOKIE=false
+      - N8N_METRICS=false
+      - WEBHOOK_URL=http://localhost:5678
+      - EXECUTIONS_DATA_PRUNE=true
+      - EXECUTIONS_DATA_MAX_AGE=168
+      - GENERIC_TIMEZONE=UTC
+      - N8N_DISABLE_PRODUCTION_MAIN_PROCESS=false
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./n8n/workflows:/home/node/.n8n/workflows
+    restart: unless-stopped
+    networks:
+      - career-ops
+
 volumes:
-  career-data:
-  career-reports:
-  career-output:
-  career-interview-prep:
-  career-jds:
+  n8n_data:
 
 networks:
   career-ops:

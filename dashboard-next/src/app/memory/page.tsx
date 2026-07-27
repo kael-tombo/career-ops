@@ -474,8 +474,8 @@ function FeedbackTab({ data, stats, onRefresh }: { data: any[]; stats: any; onRe
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
             { label: 'Total Feedback', value: stats.total, color: 'var(--color-primary-light)' },
-            { label: 'Avg Score', value: stats.avgUserScore ? stats.avgUserScore.toFixed(1) : 'N/A', color: 'var(--color-green)' },
-            { label: 'Avg Rating', value: stats.avgRating ? `${stats.avgRating.toFixed(1)}/5`, color: 'var(--color-amber)' },
+            { label: 'Avg Score', value: stats.avgUserScore ? Number(stats.avgUserScore).toFixed(1) : 'N/A', color: 'var(--color-green)' },
+            { label: 'Avg Rating', value: stats.avgRating ? (stats.avgRating.toFixed(1) + '/5') : 'N/A', color: 'var(--color-amber)' },
             { label: 'With Notes', value: data.filter((d: any) => d.user_notes).length, color: 'var(--color-lavender)' },
           ].map((s: any) => (
             <div key={s.label} className="glass rounded-xl p-3 text-center">

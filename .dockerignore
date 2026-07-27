@@ -10,16 +10,21 @@ reports/
 output/
 jds/
 interview-prep/
-jds/
 batch/logs/
-dashboard/career-ops-dashboard.exe
-dashboard/go.*
-dashboard/internal/
-dashboard/main.go
-dashboard/web/
+dashboard/
 .next/
 test_output.txt
 *.bak
 .qwen/
 .opencode/
 .claude/
+*.db
+*.db-shm
+*.db-wal
+*.log
+.gitkeep
+AGENTS.md
+CLAUDE.md
+
+# Playwright download cache (host only)
+.playwright-cache/

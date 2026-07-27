@@ -17,10 +17,11 @@
  *   node daemon.mjs --stop             # Stop running daemon
  */
 
-import { existsSync, writeFileSync, readFileSync, mkdirSync, unlinkSync } from 'fs';
+import { existsSync, appendFileSync, writeFileSync, readFileSync, mkdirSync, unlinkSync } from 'fs';
 import { join, dirname } from 'path';
 import { createServer } from 'http';
 import { fileURLToPath } from 'url';
+import yaml from 'js-yaml';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = __dirname;
@@ -63,8 +64,7 @@ function log(msg) {
 
 function appendToFile(path, content) {
   try {
-    const fs = require('fs');
-    fs.appendFileSync(path, content);
+    appendFileSync(path, content);
   } catch { /* ignore */ }
 }
 
@@ -208,6 +208,26 @@ async function runPipeline() {
   emitEvent('pipeline:start', { timestamp: new Date().toISOString() });
   saveState({ ...loadState(), lastRun: new Date().toISOString(), status: 'running' });
 
+  // Load multi-resume search configs if enabled
+  let resumeSearchConfigs = undefined;
+  try {
+    const profilePath = join(ROOT, 'config/profile.yml');
+    if (existsSync(profilePath)) {
+      const profile = yaml.load(readFileSync(profilePath, 'utf-8'));
+      if (profile.multi_resume?.enabled !== false) {
+        const { getResumeSearchWithCountries, loadAllResumes } = await import('./lib/resume-manager.mjs');
+        resumeSearchConfigs = getResumeSearchWithCountries();
+        const resumes = loadAllResumes();
+        if (resumes.length > 0) {
+          log(`   Multi-resume: ${resumes.length} resume types loaded`);
+          resumes.forEach(r => log(`   - ${r.label} (${r.fit}, ${r.searchQueries.length} queries)`));
+        }
+      }
+    }
+  } catch (err) {
+    log(`   Multi-resume init skipped: ${err.message}`);
+  }
+
   try {
     const result = await pipe.runFullPipeline({
       minScore: DAEMON_DEFAULTS.minScore,
@@ -216,6 +236,7 @@ async function runPipeline() {
       dryRun: DAEMON_DEFAULTS.dryRun,
       autoTailor: true,
       autoApply: !DAEMON_DEFAULTS.dryRun,
+      resumeSearchConfigs,
     });
 
     const state = loadState();
@@ -227,7 +248,7 @@ async function runPipeline() {
     state.status = 'idle';
     saveState(state);
 
-    emitEvent('pipeline:complete', { ...result, runCount: state.runs });
+    emitEvent('pipeline:complete', { ...result, runCount: state.runs, multiResume: resumeSearchConfigs ? true : false });
 
     log(`Pipeline complete: ${result.newJobs || 0} scanned, ${result.applied || 0} applied (run #${state.runs})`);
   } catch (err) {
@@ -365,7 +386,15 @@ function isAlreadyRunning() {
   try {
     const pid = parseInt(readFileSync(PID_PATH, 'utf-8').trim());
     if (!pid) return false;
-    try { process.kill(pid, 0); return true; } catch { return false; }
+    if (pid === process.pid) return true;
+    try {
+      process.kill(pid, 0);
+      const now = Date.now();
+      const stat = existsSync(PID_PATH) ? readFileSync(PID_PATH, 'utf-8') : '';
+      return true;
+    } catch {
+      return false;
+    }
   } catch { return false; }
 }
 
@@ -411,11 +440,9 @@ async function main() {
     process.exit(0);
   }
 
-  if (isAlreadyRunning()) {
-    console.error('Daemon is already running. Use --stop first or --force to override.');
-    if (!args.includes('--force')) process.exit(1);
-    stopDaemon();
-    await new Promise(r => setTimeout(r, 2000));
+  if (isAlreadyRunning() && !args.includes('--force')) {
+    console.warn('⚠️  Stale PID file found — cleaning up');
+    removePid();
   }
 
   writePid();
