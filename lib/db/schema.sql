@@ -97,4 +97,58 @@ CREATE TABLE IF NOT EXISTS schema_version (
   applied_at    TEXT    DEFAULT (datetime('now'))
 );
 
+-- ═══════════════════════════════════════════════════════════════
+-- Deadline Tracker (replaces data/deadlines.json)
+-- ═══════════════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS deadline_tracker (
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  url           TEXT    NOT NULL,
+  company       TEXT,
+  role          TEXT,
+  has_deadline  INTEGER DEFAULT 0,
+  deadline_date TEXT,
+  deadline_type TEXT    DEFAULT 'unknown',
+  timezone      TEXT,
+  priority      TEXT    DEFAULT 'normal',
+  days_remaining INTEGER,
+  extracted_text TEXT,
+  tracked_at    TEXT    DEFAULT (datetime('now')),
+  UNIQUE(url)
+);
+
+CREATE INDEX IF NOT EXISTS idx_deadline_date ON deadline_tracker(deadline_date);
+
+-- ═══════════════════════════════════════════════════════════════
+-- Auto-Queue (replaces data/auto-queue.json)
+-- ═══════════════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS auto_queue (
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  url           TEXT    NOT NULL,
+  company       TEXT,
+  role          TEXT,
+  matched_resume TEXT,
+  match_score   REAL,
+  priority      TEXT    DEFAULT 'low',
+  deadline      TEXT,
+  auto_queued   INTEGER DEFAULT 1,
+  queued_at     TEXT    DEFAULT (datetime('now')),
+  UNIQUE(url)
+);
+
+CREATE INDEX IF NOT EXISTS idx_auto_queue_priority ON auto_queue(priority);
+CREATE INDEX IF NOT EXISTS idx_auto_queue_resume ON auto_queue(matched_resume);
+
+-- ═══════════════════════════════════════════════════════════════
+-- Followups (replaces data/followups.json)
+-- ═══════════════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS followups (
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  company       TEXT    NOT NULL,
+  role          TEXT,
+  email_snippet TEXT,
+  sent_at       TEXT    DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_followups_company ON followups(company);
+
 INSERT OR IGNORE INTO schema_version (version) VALUES (1);

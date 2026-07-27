@@ -62,5 +62,4 @@ data/daemon-state.json
 data/daemon.log
 data/daemon.pid
 
-# Generated AI modules
-lib/ai/
+

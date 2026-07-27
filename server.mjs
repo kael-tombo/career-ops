@@ -105,6 +105,36 @@ await fastify.register(rateLimit, {
 });
 
 // ═══════════════════════════════════════════════════════════════
+// Authentication (root-level hook — applies to all routes)
+// ═══════════════════════════════════════════════════════════════
+
+const AUTH_KEY = process.env.API_KEY;
+if (AUTH_KEY) {
+  const AUTH_ALLOWED = ['/api/health', '/api/events'];
+  fastify.addHook('onRequest', async (request, reply) => {
+    if (!request.url.startsWith('/api/')) return;
+    if (AUTH_ALLOWED.some(p => request.url.startsWith(p))) return;
+    const auth = request.headers.authorization;
+    if (!auth) {
+      reply.code(401).send({ error: 'Unauthorized', message: 'Missing Authorization header' });
+      return;
+    }
+    const [scheme, token] = auth.split(' ');
+    if (scheme?.toLowerCase() !== 'bearer' || !token) {
+      reply.code(401).send({ error: 'Unauthorized', message: 'Invalid Authorization format. Use: Bearer <API_KEY>' });
+      return;
+    }
+    if (token !== AUTH_KEY) {
+      reply.code(403).send({ error: 'Forbidden', message: 'Invalid API key' });
+      return;
+    }
+  });
+  fastify.log.info('API key authentication enabled');
+} else {
+  fastify.log.warn('API_KEY not set — authentication disabled');
+}
+
+// ═══════════════════════════════════════════════════════════════
 // API Routes
 // ═══════════════════════════════════════════════════════════════
 
