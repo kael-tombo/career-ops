@@ -11,6 +11,7 @@ import {
   BrainCircuit,
   RefreshCw,
 } from 'lucide-react';
+import { API_URL } from '@/lib/api';
 
 const PROVIDER_COLORS: Record<string, string> = {
   openai: '#00A67E',
@@ -52,8 +53,7 @@ export default function ProvidersPage() {
     setLoading(true);
     setError('');
     try {
-      const base = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-      const res = await fetch(`${base}/api/ai`, { cache: 'no-store' });
+      const res = await fetch(`${API_URL}/api/ai`, { cache: 'no-store' });
       if (!res.ok) throw new Error(`Status ${res.status}`);
       const json = await res.json();
       setData(json);

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Search, Building2, Loader2, Globe, Users, AlertTriangle, ExternalLink, BookOpen, CheckCircle } from 'lucide-react';
+import { API_URL } from '@/lib/api';
 
 export default function AICompanyIntelPage() {
   const [company, setCompany] = useState('');
@@ -15,8 +16,7 @@ export default function AICompanyIntelPage() {
     setError('');
     setIntel(null);
     try {
-      const base = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-      const res = await fetch(`${base}/api/ai/company-intel/gatherCompanyIntel`, {
+      const res = await fetch(`${API_URL}/api/ai/company-intel/gatherCompanyIntel`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ companyName: company.trim(), opts: { webFetch: false } }),

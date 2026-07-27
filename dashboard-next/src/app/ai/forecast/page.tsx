@@ -16,6 +16,7 @@ import {
   ChevronUp,
 } from 'lucide-react';
 import { useDashboard } from '@/components/useDashboard';
+import { API_URL } from '@/lib/api';
 
 export default function AIForecastPage() {
   const { data, loading, refresh } = useDashboard();
@@ -26,8 +27,7 @@ export default function AIForecastPage() {
   const loadForecast = async () => {
     setForecastLoading(true);
     try {
-      const base = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-      const res = await fetch(`${base}/api/ai/pipeline-forecast/forecast`, {
+      const res = await fetch(`${API_URL}/api/ai/pipeline-forecast/forecast`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: '{}',

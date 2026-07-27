@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Brain, Target, BookOpen, Clock, Loader2, ChevronDown, ChevronUp, Zap, ExternalLink } from 'lucide-react';
 import { useDashboard } from '@/components/useDashboard';
+import { API_URL } from '@/lib/api';
 
 export default function AISkillsPage() {
   const { data, loading } = useDashboard();
@@ -15,8 +16,7 @@ export default function AISkillsPage() {
     if (!jdInput.trim()) return;
     setAnalyzing(true);
     try {
-      const base = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-      const res = await fetch(`${base}/api/ai/skill-gap/analyzeSkillGap`, {
+      const res = await fetch(`${API_URL}/api/ai/skill-gap/analyzeSkillGap`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ jdText: jdInput }),

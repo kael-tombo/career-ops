@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { API_URL } from '@/lib/api';
 
 export default function LiveIndicator() {
   const [online, setOnline] = useState(true);
@@ -13,8 +14,7 @@ export default function LiveIndicator() {
 
     const trySSE = () => {
       try {
-        const base = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-        es = new EventSource(`${base}/api/events`);
+        es = new EventSource(`${API_URL}/api/events`);
         es.onopen = () => {
           if (!cancelled) {
             setOnline(true);
@@ -37,8 +37,7 @@ export default function LiveIndicator() {
       if (cancelled) return;
       const check = async () => {
         try {
-          const base = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-          const res = await fetch(`${base}/api/diagnostics`);
+          const res = await fetch(`${API_URL}/api/diagnostics`);
           if (!cancelled) {
             setOnline(res.ok);
             setTime(new Date().toLocaleTimeString());

@@ -92,6 +92,8 @@ function useToast() {
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard')
+  const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth > 780)
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark')
   const [data, setData] = useState([])
   const [pipelineData, setPipelineData] = useState({ items: [] })
   const [profile, setProfile] = useState(null)
@@ -170,6 +172,15 @@ function App() {
       evtSource.onerror = () => evtSource.close()
     } catch (e) { /* SSE not available in all environments */ }
 
+    // Theme sync
+    if (theme === 'light') document.documentElement.classList.add('light-theme')
+    else document.documentElement.classList.remove('light-theme')
+    localStorage.setItem('theme', theme)
+
+    // Responsive sidebar
+    const onResize = () => setSidebarOpen(window.innerWidth > 780)
+    window.addEventListener('resize', onResize)
+
     // Command Palette hotkey
     const handleKeyDown = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
@@ -185,9 +196,10 @@ function App() {
     return () => {
       clearInterval(timer)
       window.removeEventListener('keydown', handleKeyDown)
+      window.removeEventListener('resize', onResize)
       if (evtSource) evtSource.close()
     }
-  }, [fetchData, addToast])
+  }, [fetchData, addToast, theme])
 
   // ── Command palette keyboard nav ──────────────────────────────
 
@@ -328,10 +340,21 @@ function App() {
 
   // ─── Render ───────────────────────────────────────────────────
 
-  if (loading) return <div className="loading-screen"><Rocket size={32} className="spin" /><span>Career-OPS loading…</span></div>
+  if (loading) return (
+    <div className="loading-screen">
+      <Rocket size={32} className="spin" />
+      <span>Career-OPS loading…</span>
+      <div style={{ display: 'flex', gap: 16, marginTop: 24, flexWrap: 'wrap', maxWidth: 600 }}>
+        <div className="skeleton-card" style={{ flex: '1 1 200px', minHeight: 100 }} />
+        <div className="skeleton-card" style={{ flex: '1 1 200px', minHeight: 100 }} />
+        <div className="skeleton-card" style={{ flex: '1 1 100%', minHeight: 80 }} />
+        <div className="skeleton-card" style={{ flex: '1 1 100%', minHeight: 140 }} />
+      </div>
+    </div>
+  )
 
   return (
-    <div className="dashboard">
+    <div className={`dashboard ${theme === 'light' ? 'light-theme' : ''}`}>
       <ToastContainer toasts={toasts} onDismiss={dismissToast} />
 
       {/* Command Palette */}
@@ -381,8 +404,13 @@ function App() {
         </div>
       )}
 
+      {/* Hamburger */}
+      <button className="hamburger" onClick={() => setSidebarOpen(prev => !prev)} title={sidebarOpen ? 'Close sidebar' : 'Open sidebar'}>
+        {sidebarOpen ? <X size={20} /> : <LayoutDashboard size={20} />}
+      </button>
+
       {/* Sidebar */}
-      <aside className="sidebar">
+      <aside className={`sidebar ${sidebarOpen ? '' : 'sidebar-collapsed'}`}>
         <div style={{ marginBottom: '24px' }}>
           <h2 className="logo-text">CAREER<span className="logo-sep">-</span><span className="logo-highlight">OPS</span></h2>
           <p className="logo-tagline">Elite Intelligence v3.0</p>
@@ -414,6 +442,10 @@ function App() {
         </nav>
 
         <div className="sidebar-footer">
+          <button className="theme-toggle" onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}>
+            {theme === 'dark' ? <span>☀️</span> : <span>🌙</span>}
+            {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+          </button>
           <div className={`health-widget card glass ${isHealthy ? 'healthy' : 'warning'}`}>
             <div className="health-header">
               {isHealthy ? <CheckCircle size={13} /> : <AlertTriangle size={13} />}

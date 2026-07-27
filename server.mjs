@@ -37,6 +37,7 @@ import globalRoutes from './lib/server/routes/global.mjs';
 import autonomousRoutes from './lib/server/routes/autonomous.mjs';
 import memoryRoutes from './lib/server/routes/memory.mjs';
 import aiRoutes from './lib/server/routes/ai.mjs';
+import metricsRoutes from './lib/server/routes/metrics.mjs';
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3001;
 const HOST = process.env.HOST || '0.0.0.0';
@@ -110,7 +111,7 @@ await fastify.register(rateLimit, {
 
 const AUTH_KEY = process.env.API_KEY;
 if (AUTH_KEY) {
-  const AUTH_ALLOWED = ['/api/health', '/api/events'];
+  const AUTH_ALLOWED = ['/api/health', '/api/events', '/api/metrics'];
   fastify.addHook('onRequest', async (request, reply) => {
     if (!request.url.startsWith('/api/')) return;
     if (AUTH_ALLOWED.some(p => request.url.startsWith(p))) return;
@@ -149,6 +150,7 @@ await fastify.register(globalRoutes, { queue });
 await fastify.register(autonomousRoutes, { queue });
 await fastify.register(memoryRoutes);
 await fastify.register(aiRoutes);
+await fastify.register(metricsRoutes);
 
 // ═══════════════════════════════════════════════════════════════
 // Static file serving (legacy dashboard fallback)

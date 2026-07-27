@@ -2,8 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Activity, Play, Square, Clock, CheckCircle2, XCircle, AlertTriangle, ExternalLink, ChevronRight, Zap, Globe, FileText, Bot, RefreshCw } from 'lucide-react';
-
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+import { API_URL } from '@/lib/api';
 
 type PipelineEvent = {
   event: string;
@@ -38,7 +37,7 @@ export default function AutonomousPage() {
 
   const fetchStatus = async () => {
     try {
-      const res = await fetch(`${API}/api/autonomous/status`, { cache: 'no-store' });
+      const res = await fetch(`${API_URL}/api/autonomous/status`, { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         setStatus(data);
@@ -57,7 +56,7 @@ export default function AutonomousPage() {
   useEffect(() => {
     let es: EventSource | null = null;
     try {
-      es = new EventSource(`${API}/api/events`);
+      es = new EventSource(`${API_URL}/api/events`);
       es.addEventListener('pipeline:start', (e: MessageEvent) => {
         setEvents(prev => [...prev.slice(-99), { event: 'pipeline:start', data: JSON.parse(e.data) }]);
         setRunning(true);
@@ -97,19 +96,19 @@ export default function AutonomousPage() {
 
   const triggerPipeline = async () => {
     try {
-      await fetch(`${API}/api/autonomous/pipeline`, { method: 'POST' });
+      await fetch(`${API_URL}/api/autonomous/pipeline`, { method: 'POST' });
     } catch { /* ignore */ }
   };
 
   const triggerScan = async () => {
     try {
-      await fetch(`${API}/api/autonomous/scan`, { method: 'POST' });
+      await fetch(`${API_URL}/api/autonomous/scan`, { method: 'POST' });
     } catch { /* ignore */ }
   };
 
   const setSchedule = async () => {
     try {
-      await fetch(`${API}/api/autonomous/schedule`, {
+      await fetch(`${API_URL}/api/autonomous/schedule`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ intervalMs: scheduleInterval * 60 * 1000, type: 'pipeline' }),
@@ -358,7 +357,7 @@ export default function AutonomousPage() {
             { icon: Zap, label: 'Run Full Pipeline', action: triggerPipeline, color: 'var(--color-primary-light)' },
             { icon: Globe, label: 'Scan Only', action: triggerScan, color: 'var(--color-green)' },
             { icon: FileText, label: 'View Reports', href: '/reports', color: 'var(--color-amber)' },
-            { icon: ExternalLink, label: 'Daemon Status', action: () => window.open(`${API}/api/autonomous/status`), color: 'var(--color-purple)' },
+            { icon: ExternalLink, label: 'Daemon Status', action: () => window.open(`${API_URL}/api/autonomous/status`), color: 'var(--color-purple)' },
           ].map((item) => {
             const Icon = item.icon;
             if (item.href) {

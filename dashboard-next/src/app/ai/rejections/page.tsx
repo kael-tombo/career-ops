@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { BarChart3, AlertTriangle, TrendingDown, Lightbulb, Loader2, RefreshCw, ChevronDown, ChevronUp, ThumbsDown, ThumbsUp } from 'lucide-react';
 import { useDashboard } from '@/components/useDashboard';
+import { API_URL } from '@/lib/api';
 
 export default function AIRejectionsPage() {
   const { data, loading, refresh } = useDashboard();
@@ -12,9 +13,8 @@ export default function AIRejectionsPage() {
   const analyze = async () => {
     setPatternsLoading(true);
     try {
-      const base = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-      const rejections = await (await fetch(`${base}/api/ai/rejection-analyzer/getRejectionData`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}', cache: 'no-store' })).json();
-      const res = await fetch(`${base}/api/ai/rejection-analyzer/analyzeRejectionPatterns`, {
+      const rejections = await (await fetch(`${API_URL}/api/ai/rejection-analyzer/getRejectionData`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}', cache: 'no-store' })).json();
+      const res = await fetch(`${API_URL}/api/ai/rejection-analyzer/analyzeRejectionPatterns`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ rejections: rejections.success ? rejections.data : [] }),

@@ -2,10 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { BarChart3, TrendingUp, PieChart, Target, Filter, Calendar, Download, RefreshCw } from 'lucide-react';
-import { fetchApplications } from '@/lib/api';
+import { API_URL, fetchApplications } from '@/lib/api';
 import type { Application } from '@/lib/types';
-
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 export default function AnalyticsPage() {
   const [apps, setApps] = useState<Application[]>([]);

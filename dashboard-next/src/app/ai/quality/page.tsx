@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { CheckCircle, XCircle, AlertTriangle, Loader2, FileText, Zap, TrendingUp, ArrowUp } from 'lucide-react';
+import { API_URL } from '@/lib/api';
 
 export default function AIQualityPage() {
   const [cvInput, setCvInput] = useState('');
@@ -14,13 +15,12 @@ export default function AIQualityPage() {
     if (!cvInput.trim() || !jdInput.trim()) return;
     setLoading(true);
     try {
-      const base = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
       const action = tab === 'improve' ? 'autoImproveCV' : 'scoreApplicationQuality';
       const body = tab === 'improve'
         ? JSON.stringify({ tailoredCvContent: cvInput, jdText: jdInput })
         : JSON.stringify({ tailoredCvContent: cvInput, jdText: jdInput });
 
-      const res = await fetch(`${base}/api/ai/quality-scorer/${action}`, {
+      const res = await fetch(`${API_URL}/api/ai/quality-scorer/${action}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body,

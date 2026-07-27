@@ -3,8 +3,7 @@
 import { useState } from 'react';
 import { useDashboard } from '@/components/useDashboard';
 import { Globe, Target, Zap, Shield, Settings, Play, Loader2, CheckCircle2, AlertCircle, ExternalLink, Search } from 'lucide-react';
-
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+import { API_URL } from '@/lib/api';
 
 export default function MassApplyPage() {
   const { data, loading } = useDashboard();
@@ -27,7 +26,7 @@ export default function MassApplyPage() {
     setRunning(true);
     setResult(null);
     try {
-      const res = await fetch(`${API}/api/jobs`, {
+      const res = await fetch(`${API_URL}/api/jobs`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type: 'mass-scan', payload: {} }),
@@ -36,7 +35,7 @@ export default function MassApplyPage() {
       if (j.jobId) {
         // Poll for completion
         const check = setInterval(async () => {
-          const r = await fetch(`${API}/api/jobs/${j.jobId}`, { cache: 'no-store' });
+          const r = await fetch(`${API_URL}/api/jobs/${j.jobId}`, { cache: 'no-store' });
           const status = await r.json();
           if (status.state === 'completed') {
             clearInterval(check);
@@ -55,7 +54,7 @@ export default function MassApplyPage() {
     setRunning(true);
     setResult(null);
     try {
-      const res = await fetch(`${API}/api/jobs`, {
+      const res = await fetch(`${API_URL}/api/jobs`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -66,7 +65,7 @@ export default function MassApplyPage() {
       const j = await res.json();
       if (j.jobId) {
         const check = setInterval(async () => {
-          const r = await fetch(`${API}/api/jobs/${j.jobId}`, { cache: 'no-store' });
+          const r = await fetch(`${API_URL}/api/jobs/${j.jobId}`, { cache: 'no-store' });
           const status = await r.json();
           if (status.state === 'completed') {
             clearInterval(check);

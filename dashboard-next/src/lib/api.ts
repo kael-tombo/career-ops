@@ -1,6 +1,7 @@
 import type { Application, PipelineItem, ReportMeta, Profile, PrepMeta, Diagnostics, DashboardData, JobStatus, ScanHistoryEntry, GlobalCapabilities, CountryData, SweepStatus } from './types';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+export const API_URL = API;
 
 async function safeJson<T>(res: Response, fallback: T): Promise<T> {
   try { return await res.json(); } catch { return fallback; }

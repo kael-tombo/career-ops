@@ -2,9 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Brain, ThumbsUp, ThumbsDown, Building2, TrendingUp, AlertTriangle, CheckCircle2, XCircle, ChevronRight, Star, Activity, Zap, RefreshCw } from 'lucide-react';
-import { fetchMemorySnapshot, fetchMemoryPreferences, fetchPreferenceSummary, submitMemoryFeedback } from '@/lib/api';
-
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+import { API_URL, fetchMemorySnapshot, fetchMemoryPreferences, fetchPreferenceSummary, submitMemoryFeedback } from '@/lib/api';
 
 type Tab = 'overview' | 'companies' | 'preferences' | 'patterns' | 'feedback';
 
@@ -33,17 +31,17 @@ export default function MemoryPage() {
       if (prefSum) setPrefSummary(prefSum);
 
       const [l, f, c, p] = await Promise.all([
-        fetch(`${API}/api/memory/learnings`, { cache: 'no-store' }).then(r => r.ok ? r.json() : []),
-        fetch(`${API}/api/memory/feedback`, { cache: 'no-store' }).then(r => r.ok ? r.json() : []),
-        fetch(`${API}/api/memory/companies`, { cache: 'no-store' }).then(r => r.ok ? r.json() : []),
-        fetch(`${API}/api/memory/patterns`, { cache: 'no-store' }).then(r => r.ok ? r.json() : []),
+        fetch(`${API_URL}/api/memory/learnings`, { cache: 'no-store' }).then(r => r.ok ? r.json() : []),
+        fetch(`${API_URL}/api/memory/feedback`, { cache: 'no-store' }).then(r => r.ok ? r.json() : []),
+        fetch(`${API_URL}/api/memory/companies`, { cache: 'no-store' }).then(r => r.ok ? r.json() : []),
+        fetch(`${API_URL}/api/memory/patterns`, { cache: 'no-store' }).then(r => r.ok ? r.json() : []),
       ]);
       setLearnings(l || []);
       setFeedback(f || []);
       setCompanyData(c || []);
       setPatterns(p || []);
 
-      const briefRes = await fetch(`${API}/api/memory/briefing`, { cache: 'no-store' });
+      const briefRes = await fetch(`${API_URL}/api/memory/briefing`, { cache: 'no-store' });
       if (briefRes.ok) {
         const data = await briefRes.json();
         setBriefing(data.briefing || '');

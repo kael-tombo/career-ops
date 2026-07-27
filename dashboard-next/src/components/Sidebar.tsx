@@ -4,8 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LayoutDashboard, Shield, Zap, FileText, Globe, BookOpen, Activity, Rocket, Compass, Bot, Brain, BarChart3, Cpu, Server } from 'lucide-react';
-
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+import { API_URL } from '@/lib/api';
 
 const navItems = [
   { href: '/', label: 'Overview', icon: LayoutDashboard },
@@ -29,13 +28,13 @@ export default function Sidebar() {
   const [version, setVersion] = useState('');
 
   useEffect(() => {
-    fetch(`${API}/api/diagnostics`)
+    fetch(`${API_URL}/api/diagnostics`)
       .then(r => r.json())
       .then(d => {
         if (d?.queue) setTrackerCount(d.queue.completed + d.queue.queued + d.queue.active);
       })
       .catch(() => {});
-    fetch(`${API}/api/applications`)
+    fetch(`${API_URL}/api/applications`)
       .then(r => r.json())
       .then(a => setTrackerCount(Array.isArray(a) ? a.length : null))
       .catch(() => {});

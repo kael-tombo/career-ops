@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useDashboard } from '@/components/useDashboard';
-import { fetchReportContent } from '@/lib/api';
+import { API_URL, fetchReportContent } from '@/lib/api';
 import { FileText, ArrowLeft, Search, Download } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -13,8 +13,6 @@ export default function ReportsPage() {
   const [content, setContent] = useState('');
   const [contentLoading, setContentLoading] = useState(false);
   const [search, setSearch] = useState('');
-
-  const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
   useEffect(() => {
     if (selected) {
@@ -39,7 +37,7 @@ export default function ReportsPage() {
             <ArrowLeft size={16} /> Back to reports
           </button>
           <a
-            href={`${API}/api/pdf/${encodeURIComponent(pdfFilename)}`}
+            href={`${API_URL}/api/pdf/${encodeURIComponent(pdfFilename)}`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--color-primary)]/10 text-sm text-[var(--color-primary-light)] hover:bg-[var(--color-primary)]/20 transition-all"

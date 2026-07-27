@@ -5,8 +5,7 @@ import { useDashboard } from '@/components/useDashboard';
 import { BookOpen, Search, ArrowLeft, ExternalLink } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+import { API_URL } from '@/lib/api';
 
 export default function InterviewPrepPage() {
   const { data, loading } = useDashboard();
@@ -19,7 +18,7 @@ export default function InterviewPrepPage() {
     if (selected) {
       setContentLoading(true);
       setContent('');
-      fetch(`${API}/api/interview-prep/${encodeURIComponent(selected)}`)
+      fetch(`${API_URL}/api/interview-prep/${encodeURIComponent(selected)}`)
         .then(r => r.text())
         .then(t => { setContent(t); setContentLoading(false); })
         .catch(() => { setContent('# Error loading prep'); setContentLoading(false); });
