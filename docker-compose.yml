@@ -8,9 +8,15 @@ services:
       - "3001:3001"
     environment:
       PORT: 3001
+      # Container MUST bind all interfaces; publish only what you need via
+      # ports: (or put a reverse proxy in front). Auth is required in prod.
       HOST: 0.0.0.0
       LOG_LEVEL: info
-      CORS_ORIGIN: "*"
+      # Lock CORS to the dashboard origin; override in .env.docker if hosted.
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000}
+      # Production gate: with NODE_ENV=production + non-local HOST the server
+      # refuses to boot without API_KEY (deploy gate G8).
+      API_KEY: ${API_KEY:-}
       RATE_LIMIT: 200
       NODE_ENV: production
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
@@ -55,11 +61,12 @@ services:
     environment:
       DAEMON_PORT: 4173
       NODE_ENV: production
-      SAFE_MODE: ${SAFE_MODE:-true}
+      # Blueprint P3 (D4): SAFE_MODE retired — consent artifacts (data/consent/)
       PIPELINE_INTERVAL: ${PIPELINE_INTERVAL:-3600}
       SCAN_INTERVAL: ${SCAN_INTERVAL:-180}
       MAX_APPLY_PER_RUN: ${MAX_APPLY_PER_RUN:-10}
-      MIN_SCORE: ${MIN_SCORE:-3.5}
+      # Default MUST match policy.mjs APPLY_MIN_SCORE_DEFAULT (4.0) — drift guard in tests/policy.test.mjs
+      MIN_SCORE: ${MIN_SCORE:-4.0}
       PIPELINE_WORKERS: ${PIPELINE_WORKERS:-3}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       GEMINI_API_KEYS: ${GEMINI_API_KEYS:-}
