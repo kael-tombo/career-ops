@@ -45,13 +45,21 @@
     "openai:eval": "node openai-eval.mjs",
     "openai:tailor": "node openai-tailor.mjs",
     "eval:golden": "node eval-golden.mjs",
+    "connectors": "node connectors.mjs",
+    "consent": "node consent.mjs",
+    "fleet": "node fleet.mjs",
     "star": "node match-star.mjs",
     "archive": "node archive-posting.mjs",
     "prepare:application": "node prepare-application.mjs",
+    "prune": "node prune-pipeline.mjs",
+    "prune:dry": "node prune-pipeline.mjs --dry-run",
     "build:dashboard": "node build-dashboard.mjs",
     "serve:dashboard": "cd dashboard && go run . --path ..",
     "postinstall": "npx playwright install chromium --with-deps || npx playwright install chromium --with-deps",
-    "manifesto": "node manifesto.mjs"
+    "manifesto": "node manifesto.mjs",
+    "backup": "node backup-restore.mjs",
+    "backup:self-test": "node backup-restore.mjs self-test",
+    "e2e": "node e2e/dashboard.e2e.mjs"
   },
   "keywords": [
     "ai",
