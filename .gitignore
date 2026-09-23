@@ -63,3 +63,15 @@ data/daemon.log
 data/daemon.pid
 
 
+
+# ShipStudio metadata
+.shipstudio/
+
+# Offers (personal documents, never committed)
+data/offers/*
+!data/offers/.gitkeep
+
+# Interview-prep sessions (real sessions contain real PII)
+interview-prep/sessions/*
+!interview-prep/sessions/.gitkeep
+!interview-prep/sessions/README.md

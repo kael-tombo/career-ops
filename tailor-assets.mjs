@@ -3,6 +3,8 @@
 import fs from 'fs';
 import { resolve, join, basename } from 'path';
 import { execSync } from 'child_process';
+import { readFileSync, existsSync } from 'fs';
+import yaml from 'js-yaml';
 
 const ROOT = process.cwd();
 const REPORTS_DIR = join(ROOT, 'reports');
@@ -29,9 +31,22 @@ function parseReport(id) {
 }
 
 function getBaseData() {
+    // Personal identity data lives ONLY in the local user layer (cv.md,
+    // resumes/, article-digest.md). Never hardcode it in engine scripts —
+    // see docs/DATA_CONTRACT* and the no-user-data CI guard.
+    // Reads config/profile.yml (gitignored user config).
+    const profilePath = join(ROOT, 'config/profile.yml');
+    if (!existsSync(profilePath)) {
+        throw new Error('config/profile.yml not found — copy config/profile.example.yml and fill in your identity data.');
+    }
+    const profile = yaml.load(readFileSync(profilePath, 'utf-8'));
+    const candidate = profile.candidate || {};
     return {
-        INITIALS: 'AR',
-        LOCATION: 'Toamasina, Madagascar',
+        NAME: candidate.full_name || '',
+        INITIALS: String(candidate.full_name || '').split(/\s+/).map(w => w[0] || '').join('').toUpperCase(),
+        EMAIL: candidate.email || '',
+        LOCATION: candidate.location || '',
+        LINKEDIN_URL: (profile.links || {}).linkedin || (candidate.linkedin || ''),
         DATE: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
     }
 }
