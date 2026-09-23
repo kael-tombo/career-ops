@@ -10,6 +10,22 @@ name: No user data in PRs
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+  push:
+    branches: [main]
+    paths:
+      - 'cv.md'
+      - 'resumes/**'
+      - 'config/profile.yml'
+      - 'modes/_profile.md'
+      - 'modes/_custom.md'
+      - 'portals.yml'
+      - 'article-digest.md'
+      - 'interview-prep/**'
+      - 'data/**'
+      - 'reports/**'
+      - 'output/**'
+      - 'jds/**'
+      - 'writing-samples/**'
 
 permissions:
   contents: read
@@ -19,7 +35,10 @@ jobs:
   guard:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v9
+      # PR path: block the PR with a review comment.
+      - name: PR guard
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v9
         with:
           script: |
             const { owner, repo } = context.repo;
@@ -33,6 +52,7 @@ jobs:
             // system default, so edits to it are legit.
             const USER_PATHS = [
               /^cv\.md$/,
+              /^resumes\//,
               /^config\/profile\.yml$/,
               /^modes\/_profile\.md$/,
               /^modes\/_custom\.md$/,
@@ -61,4 +81,43 @@ jobs:
               );
             } else {
               core.info('OK — no user-layer (private data) files touched.');
+            }
+
+      # Direct-push path (main): a push touching user-layer paths is a
+      # policy violation even when it bypasses the PR flow. Fail loudly.
+      - name: Direct-push guard
+        if: github.event_name == 'push'
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const USER_PATHS = [
+              /^cv\.md$/,
+              /^resumes\//,
+              /^config\/profile\.yml$/,
+              /^modes\/_profile\.md$/,
+              /^modes\/_custom\.md$/,
+              /^portals\.yml$/,
+              /^article-digest\.md$/,
+              /^interview-prep\//,
+              /^data\//,
+              /^reports\//,
+              /^output\//,
+              /^jds\//,
+              /^writing-samples\//,
+            ];
+            const isScaffold = (f) => /(^|\/)\.gitkeep$/.test(f) || /(^|\/)README\.md$/.test(f);
+            const files = await github.paginate(github.rest.repos.compareCommits, {
+              owner, repo, base: context.payload.before, head: context.payload.after,
+            });
+            const bad = files
+              .filter((f) => f.status !== 'removed')
+              .map((f) => f.filename)
+              .filter((f) => USER_PATHS.some((re) => re.test(f)) && !isScaffold(f));
+            if (bad.length) {
+              core.setFailed(
+                'Direct push to main touches user-layer (private data) files: ' + bad.join(', ') +
+                '. These live ONLY on your machine per DATA_CONTRACT.md.'
+              );
+            } else {
+              core.info('OK — push clean of user-layer files.');
             }
