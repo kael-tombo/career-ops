@@ -16,6 +16,7 @@
  */
 
 import Fastify from 'fastify';
+import { timingSafeEqual } from 'node:crypto';
 import cors from '@fastify/cors';
 import rateLimit from '@fastify/rate-limit';
 // Database & Queue
@@ -146,7 +147,11 @@ if (AUTH_KEY) {
       reply.code(401).send({ error: 'Unauthorized', message: 'Invalid Authorization format. Use: Bearer <API_KEY>' });
       return;
     }
-    if (token !== AUTH_KEY) {
+    // Timing-safe compare: token !== AUTH_KEY leaks key length/prefix via
+    // response-time differentials (P1-5).
+    const a = Buffer.from(String(token));
+    const b = Buffer.from(String(AUTH_KEY));
+    if (a.length !== b.length || !timingSafeEqual(a, b)) {
       reply.code(403).send({ error: 'Forbidden', message: 'Invalid API key' });
       return;
     }
